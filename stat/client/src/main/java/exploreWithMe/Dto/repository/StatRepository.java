@@ -1,4 +1,7 @@
 package exploreWithMe.Dto.repository;
 
-public class StatRepository {
+import exploreWithMe.Dto.model.Hit;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface StatRepository extends JpaRepository<Integer, Hit> {
 }
