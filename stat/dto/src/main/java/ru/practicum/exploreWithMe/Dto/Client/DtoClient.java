@@ -12,6 +12,8 @@ import ru.practicum.exploreWithMe.Dto.model.dto.HitDto;
 import ru.practicum.exploreWithMe.client.BaseClient;
 import ru.practicum.exploreWithMe.Dto.model.Hit;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +30,8 @@ public class DtoClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> saveHit(Hit hit) {
+    public ResponseEntity<Object> saveHit(HitDto hitDto) {
+        Hit hit =  DtoMapper.toHit(hitDto);
         return post("/hit" , hit);
     }
 
@@ -36,21 +39,16 @@ public class DtoClient extends BaseClient {
                                           String end,
                                           List<String> uris,
                                           boolean unique) {
+        Map<String, Object> parameters = Map.of(
+                "start", start,
+                "end", end,
+                "unique", unique
+        );
         if (uris == null) {
-            Map<String, Object> parameters = Map.of(
-                    "start", start,
-                    "end", end,
-                    "unique", unique
-            );
             return get("/stats?start={start}&end={end}&unique={unique}", parameters);
         } else {
-            Map<String, Object> parameters = Map.of(
-                    "start", start,
-                    "end", end,
-                    "uri", uris,
-                    "unique", unique
-            );
-            return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+            System.out.println("Список - " + uris.get(0));
+            return get("/stats?start={start}&end={end}&uris=" + uris.get(0) + "&unique={unique}", parameters);
         }
     }
 }

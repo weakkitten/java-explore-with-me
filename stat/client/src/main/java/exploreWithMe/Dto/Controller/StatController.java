@@ -19,13 +19,15 @@ public class StatController {
 
     @PostMapping("/hit")
     public void saveHit(@RequestBody Hit hit) {
+        log.info("Операция по сохранение начата для объекта: " + hit);
         service.saveHit(hit);
+        log.info("Сохранение успешно выполнено");
     }
 
     @GetMapping("stats")
-    public List<ViewStats> getStat(@RequestParam LocalDateTime start,
-                                   @RequestParam LocalDateTime end,
-                                   @RequestParam List<String> uris,
+    public List<Object> getStat(@RequestParam String start,
+                                   @RequestParam String end,
+                                   @RequestParam(required = false) List<String> uris,
                                    @RequestParam(defaultValue = "false") boolean unique) {
         return service.getStat(start, end, uris, unique);
     }

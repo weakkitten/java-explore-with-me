@@ -40,21 +40,16 @@ public class HitClient extends BaseClient {
                                           String end,
                                           List<String> uris,
                                           boolean unique) {
+        Map<String, Object> parameters = Map.of(
+                "start", start,
+                "end", end,
+                "unique", unique
+        );
         if (uris == null) {
-            Map<String, Object> parameters = Map.of(
-                    "start", start,
-                    "end", end,
-                    "unique", unique
-            );
             return get("/stats?start={start}&end={end}&unique={unique}", parameters);
         } else {
-            Map<String, Object> parameters = Map.of(
-                    "start", start,
-                    "end", end,
-                    "uri", uris,
-                    "unique", unique
-            );
-            return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+            System.out.println("Список в начале - " + uris);
+            return get("/stats?start={start}&end={end}&uris=" + uris + "&unique={unique}", parameters);
         }
     }
 }

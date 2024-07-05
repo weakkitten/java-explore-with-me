@@ -17,7 +17,7 @@ public class DtoController {
     private final DtoClient service;
 
     @PostMapping("/hit")
-    public ResponseEntity<Object> saveHit(@RequestBody Hit hit) {
+    public ResponseEntity<Object> saveHit(@RequestBody HitDto hit) {
         log.info("Объект получен: " + hit);
         return service.saveHit(hit);
     }

@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -20,21 +23,25 @@ public class StatService {
         repository.save(hit);
     }
 
-    public List<ViewStats> getStat(LocalDateTime start,
-                                   LocalDateTime end,
+    public List<Object> getStat(String start,
+                                   String end,
                                    List<String> uris,
                                    boolean unique) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startTime = LocalDateTime.parse(start, formatter);
+        LocalDateTime endTime = LocalDateTime.parse(end, formatter);
         if (uris == null) {
             if (unique) {
-                return repository.getStatsWithoutUris(start, end);
+                return repository.getStatsWithoutUris(startTime, endTime);
             } else {
-                return repository.getStatsUniqueWithoutUris(start, end);
+                return repository.getStatsUniqueWithoutUris(startTime, endTime);
             }
         } else {
+            System.out.println("Список - " + uris.get(0));
             if (unique) {
-                return repository.getStats(start, end, uris);
+                return repository.getStats(startTime, endTime, List.of(uris.get(0)));
             } else {
-                return repository.getStatsUnique(start, end, uris);
+                return repository.getStatsUnique(startTime, endTime, List.of(uris.get(0)));
             }
         }
     }
