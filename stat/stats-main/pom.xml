@@ -91,4 +91,15 @@
             <version>3.13.0</version>
         </dependency>
     </dependencies>
+         <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
