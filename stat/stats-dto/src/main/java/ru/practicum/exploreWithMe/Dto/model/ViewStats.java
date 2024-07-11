@@ -9,6 +9,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class ViewStats {
     public String app;
+    
     public String uri;
+    
     public Integer hits;
 }
