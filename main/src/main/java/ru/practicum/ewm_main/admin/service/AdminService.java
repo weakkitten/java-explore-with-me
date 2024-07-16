@@ -72,7 +72,7 @@ public class AdminService {
     }
 
     public List<User> getUsers(int userId, int from, int size) {
-        return userRepository.findByIdPageable(userId, (Pageable) PageRequest.of(from > 0 ? from / size : 0, size));
+        return userRepository.findByIdPageable(userId, PageRequest.of(from > 0 ? from / size : 0, size));
     }
 
     public void addNewUser(UserDto dto) {
