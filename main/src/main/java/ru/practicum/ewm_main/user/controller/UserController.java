@@ -37,7 +37,7 @@ public class UserController {
         return null;
     }
 
-    @PatchMapping("/{userId}/events/{eventId}")
+    @PatchMapping("/{userId}/events/{eventId}/requests")
     public Object updateUserEventRequest(@PathVariable int userId, @PathVariable int eventId) {
         return null;
     }
