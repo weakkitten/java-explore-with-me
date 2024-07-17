@@ -17,11 +17,11 @@ public class CompilationController {
     public ResponseEntity<Object> getCompilations(@RequestParam boolean pinned,
                                                   @RequestParam(defaultValue = "0") int from,
                                                   @RequestParam(defaultValue = "10") int size) {
-        return null;
+        return service.getCompilations(pinned, from, size);
     }
 
     @GetMapping("/{compId}")
     public ResponseEntity<Object> getCompilationsById(@PathVariable int compId) {
-        return null;
+        return service.getCompilationsById(compId);
     }
 }

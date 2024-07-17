@@ -21,13 +21,12 @@ import ru.practicum.ewm_main.event.model.dto.EventsMapper;
 import ru.practicum.ewm_main.event.model.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm_main.event.repository.CompilationsEventsRepository;
 import ru.practicum.ewm_main.event.repository.EventsRepository;
-import ru.practicum.ewm_main.request.reposytory.RequestRepository;
+import ru.practicum.ewm_main.request.repository.RequestRepository;
 import ru.practicum.ewm_main.user.model.User;
 import ru.practicum.ewm_main.user.model.dto.UserDto;
 import ru.practicum.ewm_main.user.model.dto.UserMapper;
 import ru.practicum.ewm_main.user.repository.UserRepository;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @Service
@@ -72,7 +71,7 @@ public class AdminService {
     }
 
     public List<User> getUsers(int userId, int from, int size) {
-        return userRepository.findByIdPageable(userId, PageRequest.of(from > 0 ? from / size : 0, size));
+        return userRepository.findById(userId, PageRequest.of(from > 0 ? from / size : 0, size));
     }
 
     public void addNewUser(UserDto dto) {
@@ -98,13 +97,15 @@ public class AdminService {
     }
 
     public void deleteCompilations(int compId) {
-        compilationsEventsRepository.deletedAllByCompilationId(compId);
+        List<CompilationsEvents> compilationsEventsList = compilationsEventsRepository.findByCompilationId(compId);
+        compilationsEventsRepository.deleteAll(compilationsEventsList);
         compilationRepository.deleteById(compId);
     }
 
     public void updateCompilation(int compId, UpdateCompilationRequest updateCompilationRequest) {
         List<Integer> eventList = updateCompilationRequest.getEvents();
-        compilationsEventsRepository.deletedAllByCompilationId(compId);
+        List<CompilationsEvents> compilationsEventsList = compilationsEventsRepository.findByCompilationId(compId);
+        compilationsEventsRepository.deleteAll(compilationsEventsList);
         for (Integer eventId : eventList) {
             CompilationsEvents compilationsEvents = CompilationsEvents.builder()
                     .eventId(eventId)

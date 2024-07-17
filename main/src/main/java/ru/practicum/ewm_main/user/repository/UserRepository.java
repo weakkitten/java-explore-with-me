@@ -6,5 +6,5 @@ import ru.practicum.ewm_main.user.model.User;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-    List<User> findByIdPageable(int userId, Pageable pageable);
+    List<User> findById(int userId, Pageable pageable);
 }

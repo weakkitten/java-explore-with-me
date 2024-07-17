@@ -16,11 +16,11 @@ public class CategoriesController {
     @GetMapping
     public ResponseEntity<Object> getCategories(@RequestParam(defaultValue = "0") int from,
                                                 @RequestParam(defaultValue = "10") int size) {
-        return null;
+        return service.getCategories(from, size);
     }
 
     @GetMapping("/{}catId")
     public ResponseEntity<Object> getCategoriesById(@PathVariable int catId) {
-        return null;
+        return service.getCategoriesById(catId);
     }
 }
