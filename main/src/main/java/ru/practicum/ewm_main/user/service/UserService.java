@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm_main.categories.repository.CategoriesRepository;
 import ru.practicum.ewm_main.error.exception.BadRequestException;
+import ru.practicum.ewm_main.error.exception.NotFoundException;
 import ru.practicum.ewm_main.event.model.Events;
 import ru.practicum.ewm_main.event.model.dto.EventShortDto;
 import ru.practicum.ewm_main.event.model.dto.EventsMapper;
@@ -15,18 +17,18 @@ import ru.practicum.ewm_main.request.model.Request;
 import ru.practicum.ewm_main.request.model.RequestDto;
 import ru.practicum.ewm_main.request.model.RequestMapper;
 import ru.practicum.ewm_main.request.repository.RequestRepository;
-import ru.practicum.ewm_main.user.repository.UserRepository;
 import ru.practicum.ewm_main.utility.Status;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
     private final EventsRepository eventsRepository;
     private final RequestRepository requestRepository;
+    public final CategoriesRepository categoriesRepository;
 
     public ResponseEntity<Object> getUsersEvents(int userId, int from, int size) {
         List<Events> userEventsList =  eventsRepository.findByInitiatorId(userId,
@@ -39,10 +41,12 @@ public class UserService {
     }
 
     public ResponseEntity<Object> addNewEvents(int userId, NewEventDto dto) {
-        Events events = EventsMapper.toEvent(dto);
+        Events events = EventsMapper.toEvent(dto, userId);
         eventsRepository.save(events);
+        System.out.println("Категория - " + eventsRepository.findByInitiatorIdAndAnnotation(userId,
+                events.getAnnotation()).getCategory());
         EventShortDto shortDto = EventsMapper.toEventShortDto(eventsRepository.findByInitiatorIdAndAnnotation(userId,
-                                                                                            events.getAnnotation()));
+                events.getAnnotation()));
         return ResponseEntity.ok(shortDto);
     }
 
@@ -55,14 +59,14 @@ public class UserService {
         return ResponseEntity.ok(shortDto);
     }
 
-    public ResponseEntity<Object> updateUserEvent(int userId, int eventId) {
+    public Object updateUserEvent(int userId, int eventId) {
         if (eventsRepository.findById(eventId).isEmpty()) {
             throw new BadRequestException("Не найден");
         }
         Events events = eventsRepository.findById(eventId).get();
         EventShortDto shortDto = EventsMapper.toEventShortDto(eventsRepository.findById(eventId).get());
         if (events.getInitiatorId() != userId) {
-            throw new BadRequestException("Некорректный id пользователя");
+            throw new BadRequestException("Некорректный пользователь");
         }
         return ResponseEntity.ok(shortDto);
     }
@@ -83,7 +87,7 @@ public class UserService {
         return ResponseEntity.ok(requestRepository.findAllById(requestStatusUpdateRequest.getRequestsIds()));
     }
 
-    public Object getRequests(int userId) {
+    public ResponseEntity<Object> getRequests(int userId) {
         List<Request> requestList = requestRepository.findByRequester(userId);
         List<RequestDto> requestDtoList = new ArrayList<>();
         for (Request request : requestList) {
@@ -92,11 +96,42 @@ public class UserService {
         return ResponseEntity.ok(requestDtoList);
     }
 
-    public Object addNewRequests(int userId) {
-        return null;
+    public ResponseEntity<Object> addNewRequests(int userId, int eventId) {
+        if (eventsRepository.findById(eventId).isEmpty()) {
+            throw new NotFoundException("Не найден");
+        }
+        Events event = eventsRepository.findById(eventId).get();
+        if (requestRepository.findByRequesterAndEvent(userId, eventId).isPresent()) {
+            throw new BadRequestException("Такой запрос уже существует");
+        }
+        if (event.getConfirmedRequests() == event.getParticipantLimit()) {
+            throw new BadRequestException("Места закончились");
+        }
+        Request request = Request.builder()
+                .created(LocalDateTime.now())
+                .event(eventId)
+                .requester(userId)
+                .build();
+        if (event.isRequestModeration()) {
+            request.setStatus(Status.PENDING);
+        } else {
+            request.setStatus(Status.CONFIRMED);
+        }
+        requestRepository.save(request);
+        RequestDto dto = RequestMapper.toRequestDto(requestRepository.findByRequesterAndEvent(userId, eventId).get());
+        return ResponseEntity.ok(dto);
     }
 
-    public Object cancelRequests(int userId, int requestId) {
-        return null;
+    public ResponseEntity<Object> cancelRequests(int userId, int requestId) {
+        if (requestRepository.findById(requestId).isEmpty()) {
+            throw new BadRequestException("Запрос не найден");
+        }
+        Request request = requestRepository.findById(requestId).get();
+        if (request.getRequester() != userId) {
+            throw new BadRequestException("Пользователь не является владельцем запроса");
+        }
+        request.setStatus(Status.REJECTED);
+        requestRepository.save(request);
+        return ResponseEntity.ok(request);
     }
 }

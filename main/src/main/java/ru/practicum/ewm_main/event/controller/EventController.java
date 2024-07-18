@@ -16,15 +16,18 @@ public class EventController {
     private final EventsService service;
 
     @GetMapping
-    public ResponseEntity<Object> getEvents(@RequestParam String text,
-                                            @RequestParam List<Integer> categories,
-                                            @RequestParam boolean paid,
-                                            @RequestParam String rangeStart,
-                                            @RequestParam String rangeEnd,
-                                            @RequestParam boolean onlyAvailable,
-                                            @RequestParam String sort,
+    public ResponseEntity<Object> getEvents(@RequestParam(required = false) String text,
+                                            @RequestParam(required = false) List<Integer> categories,
+                                            @RequestParam(required = false) boolean paid,
+                                            @RequestParam(required = false) String rangeStart,
+                                            @RequestParam(required = false) String rangeEnd,
+                                            @RequestParam(required = false) boolean onlyAvailable,
+                                            @RequestParam(required = false) String sort,
                                             @RequestParam(defaultValue = "0") int from,
                                             @RequestParam(defaultValue = "10") int size) {
+        System.out.println("Мы же здесь?");
+        System.out.println("Текст - " + text);
+        System.out.println("Размер - " + size);
         return service.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 

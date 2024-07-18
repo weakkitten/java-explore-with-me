@@ -8,6 +8,7 @@ import ru.practicum.ewm_main.utility.State;
 import ru.practicum.ewm_main.utility.StateActionAdmin;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @UtilityClass
 public class EventsMapper {
@@ -37,25 +38,27 @@ public class EventsMapper {
                 .category(CategoriesMapper.toCategoryDto(events.getCategory()))
                 .confirmedRequests(events.getConfirmedRequests())
                 .eventDate(events.getEventDate())
-                .initiator(UserMapper.userShortDto(events.getUser()))
                 .paid(events.isPaid())
                 .title(events.getTitle())
                 .views(events.getViews())
+                .initiator(UserMapper.userShortDto(events.getInitiator()))
                 .build();
     }
 
-    public static Events toEvent(NewEventDto dto) {
+    public static Events toEvent(NewEventDto dto, int userId) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return Events.builder()
                 .annotation(dto.getAnnotation())
                 .categoryId(dto.getCategory())
                 .description(dto.getDescription())
-                .eventDate(LocalDateTime.parse(dto.getEventDate()))
+                .eventDate(LocalDateTime.parse(dto.getEventDate(), formatter))
                 .lat(dto.getLocation().getLat())
                 .lon(dto.getLocation().getLon())
                 .paid(dto.isPaid())
                 .participantLimit(dto.getParticipantLimit())
                 .requestModeration(dto.isRequestModeration())
                 .title(dto.getTitle())
+                .initiatorId(userId)
                 .build();
     }
 }
