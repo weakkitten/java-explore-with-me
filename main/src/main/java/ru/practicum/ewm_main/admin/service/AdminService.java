@@ -27,6 +27,7 @@ import ru.practicum.ewm_main.event.model.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm_main.event.repository.CompilationsEventsRepository;
 import ru.practicum.ewm_main.event.repository.EventsRepository;
 import ru.practicum.ewm_main.user.model.User;
+import ru.practicum.ewm_main.user.model.dto.NewUserDto;
 import ru.practicum.ewm_main.user.model.dto.UserDto;
 import ru.practicum.ewm_main.user.model.dto.UserMapper;
 import ru.practicum.ewm_main.user.model.dto.UserShortDto;
@@ -109,12 +110,12 @@ public class AdminService {
         return ResponseEntity.ok(userRepository.findById(userId, PageRequest.of(from > 0 ? from / size : 0, size)));
     }
 
-    public ResponseEntity<Object> addNewUser(UserDto dto) {
+    public ResponseEntity<Object> addNewUser(NewUserDto dto) {
         User user = UserMapper.toUser(dto);
         userRepository.save(user);
-        UserShortDto shortDto = UserMapper.userShortDto(userRepository.findByNameAndEmail(user.getName(),
+        UserDto userDto = UserMapper.toUserDto(userRepository.findByNameAndEmail(user.getName(),
                 user.getEmail()));
-        return ResponseEntity.ok(shortDto);
+        return ResponseEntity.ok(userDto);
     }
 
     public ResponseEntity<Object> deleteUser(int userId) {

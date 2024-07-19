@@ -48,9 +48,9 @@ public class UserService {
         events.setState(State.PENDING);
         events.setCreatedOn(LocalDateTime.now());
         eventsRepository.save(events);
-        EventShortDto shortDto = EventsMapper.toEventShortDto(eventsRepository.findByInitiatorIdAndAnnotation(userId,
+        EventFullDto fullDto = EventsMapper.toEventFullDto(eventsRepository.findByInitiatorIdAndAnnotation(userId,
                 events.getAnnotation()));
-        return ResponseEntity.ok(shortDto);
+        return ResponseEntity.ok(fullDto);
     }
 
     public ResponseEntity<Object> getUserEventInfo(int userId, int eventId) {

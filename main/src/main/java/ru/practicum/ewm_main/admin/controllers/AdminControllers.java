@@ -9,6 +9,7 @@ import ru.practicum.ewm_main.categories.model.dto.NewCategoryDto;
 import ru.practicum.ewm_main.compilation.model.dto.NewCompilationDto;
 import ru.practicum.ewm_main.compilation.model.dto.UpdateCompilationRequest;
 import ru.practicum.ewm_main.event.model.dto.UpdateEventAdminRequest;
+import ru.practicum.ewm_main.user.model.dto.NewUserDto;
 import ru.practicum.ewm_main.user.model.dto.UserDto;
 
 import java.util.List;
@@ -79,7 +80,7 @@ public class AdminControllers {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Object> addNewUser(@RequestBody UserDto dto) {
+    public ResponseEntity<Object> addNewUser(@RequestBody NewUserDto dto) {
         log.info("===============");
         log.info("Добавление нового пользователя из админки - " + dto);
         log.info("===============");
