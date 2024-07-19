@@ -16,11 +16,17 @@ public class CategoriesController {
     @GetMapping
     public ResponseEntity<Object> getCategories(@RequestParam(defaultValue = "0") int from,
                                                 @RequestParam(defaultValue = "10") int size) {
+        log.info("===============");
+        log.info("Выборка категории из КатегориКонтроллер");
+        log.info("===============");
         return service.getCategories(from, size);
     }
 
     @GetMapping("/{}catId")
     public ResponseEntity<Object> getCategoriesById(@PathVariable int catId) {
+        log.info("===============");
+        log.info("Поиск по id в КатегориКонтроллер - " + catId);
+        log.info("===============");
         return service.getCategoriesById(catId);
     }
 }

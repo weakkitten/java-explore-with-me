@@ -17,11 +17,17 @@ public class CompilationController {
     public ResponseEntity<Object> getCompilations(@RequestParam boolean pinned,
                                                   @RequestParam(defaultValue = "0") int from,
                                                   @RequestParam(defaultValue = "10") int size) {
+        log.info("===============");
+        log.info("Выборка сборок из КомпилКонтроллера");
+        log.info("===============");
         return service.getCompilations(pinned, from, size);
     }
 
     @GetMapping("/{compId}")
     public ResponseEntity<Object> getCompilationsById(@PathVariable int compId) {
+        log.info("===============");
+        log.info("Выгрузка Сборки по Ид из КомпилКонтроллера - " + compId);
+        log.info("===============");
         return service.getCompilationsById(compId);
     }
 }

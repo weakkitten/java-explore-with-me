@@ -1,5 +1,7 @@
 package ru.practicum.ewm_main.event.model.dto;
 
+import lombok.Builder;
+import lombok.Data;
 import ru.practicum.ewm_main.categories.model.dto.CategoryDto;
 import ru.practicum.ewm_main.event.model.Location;
 import ru.practicum.ewm_main.user.model.dto.UserShortDto;
@@ -7,8 +9,10 @@ import ru.practicum.ewm_main.utility.State;
 
 import java.time.LocalDateTime;
 
+@Data
+@Builder
 public class EventFullDto {
-    private int id;
+    private Integer id;
     private String annotation;
     private CategoryDto category;
     private LocalDateTime createdOn;
@@ -17,10 +21,10 @@ public class EventFullDto {
     private LocalDateTime eventDate;
     private UserShortDto initiator;
     private Location location;
-    private boolean paid;
-    private int participantLimit;
+    private Boolean paid;
+    private Integer participantLimit;
     private LocalDateTime publishedOn;
-    private boolean requestModeration;
+    private Boolean requestModeration;
     private State state;
     private String title;
     private int views;

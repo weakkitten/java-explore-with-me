@@ -11,13 +11,13 @@ import java.time.LocalDateTime;
 @Builder
 public class UpdateEventAdminRequest {
     private String annotation;
-    private int category;
+    private Integer category;
     private String description;
     private LocalDateTime eventDate;
     private Location location;
-    private boolean paid;
-    private int participantLimit;
-    private boolean requestModeration;
+    private Boolean paid;
+    private Integer participantLimit;
+    private Boolean requestModeration;
     private StateActionAdmin stateAction;
     private String title;
 }

@@ -5,7 +5,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm_main.error.exception.BadRequestException;
+import ru.practicum.ewm_main.error.exception.NotFoundException;
 import ru.practicum.ewm_main.event.repository.EventsRepository;
+import ru.practicum.ewm_main.utility.State;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,6 +31,9 @@ public class EventsService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (sort == null) {
             return ResponseEntity.ok(List.of());
+        }
+        if (LocalDateTime.parse(rangeEnd, formatter).isBefore(LocalDateTime.parse(rangeStart, formatter))) {
+            throw new BadRequestException("Некорректный отрезок времени");
         }
         if (rangeEnd == null) {
             LocalDateTime time = LocalDateTime.now();
@@ -95,11 +101,13 @@ public class EventsService {
                 }
             }
         }
-        System.out.println("Не верю..");
         return null;
     }
 
     public ResponseEntity<Object> getEventsById(int id) {
+        if (repository.findById(id).get().getState() != State.PUBLISHED) {
+            throw new NotFoundException("Не найдено");
+        }
         return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
     }
 }

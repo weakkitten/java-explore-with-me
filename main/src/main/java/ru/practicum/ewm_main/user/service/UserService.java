@@ -4,19 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm_main.categories.repository.CategoriesRepository;
 import ru.practicum.ewm_main.error.exception.BadRequestException;
 import ru.practicum.ewm_main.error.exception.NotFoundException;
 import ru.practicum.ewm_main.event.model.Events;
-import ru.practicum.ewm_main.event.model.dto.EventShortDto;
-import ru.practicum.ewm_main.event.model.dto.EventsMapper;
-import ru.practicum.ewm_main.event.model.dto.NewEventDto;
+import ru.practicum.ewm_main.event.model.dto.*;
 import ru.practicum.ewm_main.event.repository.EventsRepository;
 import ru.practicum.ewm_main.request.model.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm_main.request.model.Request;
 import ru.practicum.ewm_main.request.model.RequestDto;
 import ru.practicum.ewm_main.request.model.RequestMapper;
 import ru.practicum.ewm_main.request.repository.RequestRepository;
+import ru.practicum.ewm_main.user.repository.UserRepository;
+import ru.practicum.ewm_main.utility.State;
 import ru.practicum.ewm_main.utility.Status;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final UserRepository userRepository;
     private final EventsRepository eventsRepository;
     private final RequestRepository requestRepository;
     public final CategoriesRepository categoriesRepository;
@@ -40,11 +42,12 @@ public class UserService {
         return ResponseEntity.ok(eventShortDtoList);
     }
 
+    @Transactional
     public ResponseEntity<Object> addNewEvents(int userId, NewEventDto dto) {
         Events events = EventsMapper.toEvent(dto, userId);
+        events.setState(State.PENDING);
+        events.setCreatedOn(LocalDateTime.now());
         eventsRepository.save(events);
-        System.out.println("Категория - " + eventsRepository.findByInitiatorIdAndAnnotation(userId,
-                events.getAnnotation()).getCategory());
         EventShortDto shortDto = EventsMapper.toEventShortDto(eventsRepository.findByInitiatorIdAndAnnotation(userId,
                 events.getAnnotation()));
         return ResponseEntity.ok(shortDto);
@@ -55,20 +58,22 @@ public class UserService {
         if (events.getInitiatorId() != userId) {
             throw new BadRequestException("Некорректный id пользователя");
         }
-        EventShortDto shortDto = EventsMapper.toEventShortDto(eventsRepository.findById(eventId).get());
+        EventFullDto shortDto = EventsMapper.toEventFullDto(eventsRepository.findById(eventId).get());
         return ResponseEntity.ok(shortDto);
     }
 
-    public Object updateUserEvent(int userId, int eventId) {
+    @Transactional
+    public Object updateUserEvent(int userId, int eventId, UpdateEventUserRequest dto) {
         if (eventsRepository.findById(eventId).isEmpty()) {
             throw new BadRequestException("Не найден");
         }
         Events events = eventsRepository.findById(eventId).get();
-        EventShortDto shortDto = EventsMapper.toEventShortDto(eventsRepository.findById(eventId).get());
-        if (events.getInitiatorId() != userId) {
-            throw new BadRequestException("Некорректный пользователь");
+        if (events.getState().equals(State.PUBLISHED)) {
+            throw new BadRequestException("Событие опубликовано");
         }
-        return ResponseEntity.ok(shortDto);
+        eventsRepository.save(EventsMapper.updateForUsers(events, dto));
+        EventFullDto fullDto = EventsMapper.toEventFullDto(eventsRepository.findById(eventId).get());
+        return ResponseEntity.ok(fullDto);
     }
 
     public ResponseEntity<Object> getUserEventRequest(int userId, int eventId) {
@@ -76,15 +81,16 @@ public class UserService {
         return ResponseEntity.ok(requestList);
     }
 
+    @Transactional
     public ResponseEntity<List<Request>> updateUserEventRequest(int userId,
                                                                 int eventId,
                                                                 EventRequestStatusUpdateRequest requestStatusUpdateRequest) {
-        List<Request> requestList = requestRepository.findAllById(requestStatusUpdateRequest.getRequestsIds());
+        List<Request> requestList = requestRepository.findByEvent(eventId);
         for (Request request : requestList) {
             request.setStatus(Status.CONFIRMED);
         }
         requestRepository.saveAll(requestList);
-        return ResponseEntity.ok(requestRepository.findAllById(requestStatusUpdateRequest.getRequestsIds()));
+        return ResponseEntity.ok(requestRepository.findByEvent(eventId));
     }
 
     public ResponseEntity<Object> getRequests(int userId) {
@@ -96,6 +102,7 @@ public class UserService {
         return ResponseEntity.ok(requestDtoList);
     }
 
+    @Transactional
     public ResponseEntity<Object> addNewRequests(int userId, int eventId) {
         if (eventsRepository.findById(eventId).isEmpty()) {
             throw new NotFoundException("Не найден");
@@ -112,7 +119,7 @@ public class UserService {
                 .event(eventId)
                 .requester(userId)
                 .build();
-        if (event.isRequestModeration()) {
+        if (event.getRequestModeration()) {
             request.setStatus(Status.PENDING);
         } else {
             request.setStatus(Status.CONFIRMED);

@@ -24,11 +24,11 @@ import java.time.LocalDateTime;
 public class Events {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     @Column(columnDefinition = "TEXT")
     private String annotation;
     @Column(name = "category_id")
-    private int categoryId;
+    private Integer categoryId;
     @Column(name = "confirmed_requests")
     private int confirmedRequests;
     @Column(name = "created_on")
@@ -40,17 +40,17 @@ public class Events {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @Column(name = "initiator_id")
-    private int initiatorId;
-    private int lat;
-    private int lon;
-    private boolean paid;
+    private Integer initiatorId;
+    private Float lat;
+    private Float lon;
+    private Boolean paid;
     @Column(name = "participant_limit")
-    private int participantLimit;
+    private Integer participantLimit;
     @Column(name = "published_on")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
     @Column(name = "request_moderation")
-    private boolean requestModeration;
+    private Boolean requestModeration;
     @Enumerated(EnumType.STRING)
     private State state;
     private String title;

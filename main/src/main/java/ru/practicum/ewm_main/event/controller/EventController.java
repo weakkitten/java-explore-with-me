@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main.event.service.EventsService;
 
+import javax.validation.constraints.Future;
 import java.util.List;
 
 @RestController
@@ -25,14 +26,17 @@ public class EventController {
                                             @RequestParam(required = false) String sort,
                                             @RequestParam(defaultValue = "0") int from,
                                             @RequestParam(defaultValue = "10") int size) {
-        System.out.println("Мы же здесь?");
-        System.out.println("Текст - " + text);
-        System.out.println("Размер - " + size);
+        log.info("===============");
+        log.info("Выгрузка ивентов из ИвентКонтроллера");
+        log.info("===============");
         return service.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getEventsById(@PathVariable int id) {
+        log.info("===============");
+        log.info("Выгрузка события из ИвентКонтроллера - " + id);
+        log.info("===============");
         return service.getEventsById(id);
     }
 }

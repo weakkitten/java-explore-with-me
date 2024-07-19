@@ -12,15 +12,15 @@ public class NewEventDto {
     @NotEmpty
     @NotBlank
     private String annotation;
-    private int category;
+    private Integer category;
     @NotEmpty
     @NotBlank
     private String description;
     private String eventDate;
     private Location location;
-    private boolean paid;
+    private Boolean paid;
     @Positive
     private int participantLimit;
-    private boolean requestModeration;
+    private Boolean requestModeration;
     private String title;
 }

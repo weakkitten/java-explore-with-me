@@ -19,6 +19,8 @@ import ru.practicum.ewm_main.compilation.repository.CompilationRepository;
 import ru.practicum.ewm_main.error.exception.BadRequestException;
 import ru.practicum.ewm_main.event.model.CompilationsEvents;
 import ru.practicum.ewm_main.event.model.Events;
+import ru.practicum.ewm_main.event.model.Location;
+import ru.practicum.ewm_main.event.model.dto.EventFullDto;
 import ru.practicum.ewm_main.event.model.dto.EventShortDto;
 import ru.practicum.ewm_main.event.model.dto.EventsMapper;
 import ru.practicum.ewm_main.event.model.dto.UpdateEventAdminRequest;
@@ -29,8 +31,10 @@ import ru.practicum.ewm_main.user.model.dto.UserDto;
 import ru.practicum.ewm_main.user.model.dto.UserMapper;
 import ru.practicum.ewm_main.user.model.dto.UserShortDto;
 import ru.practicum.ewm_main.user.repository.UserRepository;
+import ru.practicum.ewm_main.utility.State;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,21 +77,32 @@ public class AdminService {
                                             String rangeEnd,
                                             int from,
                                             int size) {
-        List<Events> eventsList = eventsRepository.getEventsWithRangeTime(users,
-                states,
-                categories,
-                LocalDateTime.parse(rangeStart),
-                LocalDateTime.parse(rangeEnd),
-                PageRequest.of(from / size, size));
-        return ResponseEntity.ok(eventsList);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        List<State> stateList = new ArrayList<>();
+        for (String str : states) {
+            stateList.add(State.valueOf(str));
+        }
+        List<Events> eventsList = eventsRepository.getEventsWithUsersAndStatesAndCategories(users,
+                    stateList,
+                    categories,
+                    LocalDateTime.parse(rangeStart, formatter),
+                    LocalDateTime.parse(rangeEnd, formatter),
+                    PageRequest.of(from / size, size));
+        List<EventFullDto> eventFullDtoList = new ArrayList<>();
+        for (Events events : eventsList) {
+            eventFullDtoList.add(EventsMapper.toEventFullDto(events));
+        }
+        return ResponseEntity.ok(eventFullDtoList);
     }
 
     public ResponseEntity<Object> updateEvents(int eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Events events = eventsRepository.findById(eventId).get();
-        Events updateEvents = EventsMapper.updateEvents(events, updateEventAdminRequest);
+        System.out.println("До отмены - " + events);
+        Events updateEvents = EventsMapper.updateForAdmin(events, updateEventAdminRequest);
         eventsRepository.save(updateEvents);
-        EventShortDto eventShortDto = EventsMapper.toEventShortDto(eventsRepository.findById(eventId).get());
-        return ResponseEntity.ok(eventShortDto);
+        System.out.println("После отмены - " + eventsRepository.findById(eventId).get());
+        EventFullDto eventFullDtoDto = EventsMapper.toEventFullDto(eventsRepository.findById(eventId).get());
+        return ResponseEntity.ok(eventFullDtoDto);
     }
 
     public ResponseEntity<Object> getUsers(int userId, int from, int size) {
