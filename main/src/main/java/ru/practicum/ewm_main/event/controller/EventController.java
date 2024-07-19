@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main.event.service.EventsService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Future;
 import java.util.List;
 
@@ -33,10 +34,10 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getEventsById(@PathVariable int id) {
+    public ResponseEntity<Object> getEventsById(@PathVariable int id, HttpServletRequest request) {
         log.info("===============");
         log.info("Выгрузка события из ИвентКонтроллера - " + id);
         log.info("===============");
-        return service.getEventsById(id);
+        return service.getEventsById(id, request.getRemoteAddr(), request.getRequestURI());
     }
 }

@@ -7,7 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm_main.error.exception.BadRequestException;
 import ru.practicum.ewm_main.error.exception.NotFoundException;
+import ru.practicum.ewm_main.event.model.Events;
+import ru.practicum.ewm_main.event.model.Views;
+import ru.practicum.ewm_main.event.model.dto.EventFullDto;
+import ru.practicum.ewm_main.event.model.dto.EventsMapper;
 import ru.practicum.ewm_main.event.repository.EventsRepository;
+import ru.practicum.ewm_main.event.repository.ViewsRepository;
 import ru.practicum.ewm_main.utility.State;
 
 import java.time.LocalDateTime;
@@ -18,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventsService {
     private final EventsRepository repository;
+    private final ViewsRepository viewsRepository;
 
     public ResponseEntity<Object> getEvents(String text,
                                             List<Integer> categories,
@@ -104,10 +110,30 @@ public class EventsService {
         return null;
     }
 
-    public ResponseEntity<Object> getEventsById(int id) {
+    public ResponseEntity<Object> getEventsById(int id, String ip, String requestUri) {
         if (repository.findById(id).get().getState() != State.PUBLISHED) {
             throw new NotFoundException("Не найдено");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(repository.findById(id));
+        if (viewsRepository.findByEventIdAndIp(id, ip).isEmpty()) {
+            Events events = repository.findById(id).get();
+            events.setViews(events.getViews() + 1);
+            repository.save(events);
+            Views views = Views.builder()
+                    .eventId(id)
+                    .ip(ip)
+                    .build();
+            viewsRepository.save(views);
+        }
+        /*            RestTemplate template = new RestTemplate();
+            Hit hit = Hit.builder()
+                    .app("ewm-main")
+                    .uri(requestUri)
+                    .ip(ip)
+                    .timestamp(LocalDateTime.now())
+                    .build();
+            template.postForEntity("http://localhost:9090", hit, Void.class);*/
+        Events events = repository.findById(id).get();
+        EventFullDto fullDto = EventsMapper.toEventFullDto(events);
+        return ResponseEntity.status(HttpStatus.OK).body(fullDto);
     }
 }
