@@ -83,7 +83,7 @@ public class EventsMapper {
             events.setDescription(request.getDescription());
         }
         if (request.getEventDate() != null) {
-            events.setEventDate(request.getEventDate());
+            events.setEventDate(LocalDateTime.parse(request.getEventDate(), formatter));
         }
         if (request.getLocation() != null) {
             events.setLat(request.getLocation().getLat());

@@ -26,6 +26,7 @@ import ru.practicum.ewm_main.utility.State;
 import ru.practicum.ewm_main.utility.Status;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +51,10 @@ public class UserService {
     @Transactional
     public ResponseEntity<Object> addNewEvents(int userId, NewEventDto dto) {
         Events events = EventsMapper.toEvent(dto, userId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (LocalDateTime.parse(dto.getEventDate(), formatter).isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Некорректное время события");
+        }
         events.setState(State.PENDING);
         events.setCreatedOn(LocalDateTime.now());
         eventsRepository.save(events);
@@ -57,7 +62,7 @@ public class UserService {
         UserShortDto userShortDto = UserMapper.userShortDto(userRepository.findById(events.getInitiatorId()).get());
         EventFullDto fullDto = EventsMapper.toEventFullDto(eventsRepository.findByInitiatorIdAndAnnotation(userId,
                 events.getAnnotation()), categoryDto, userShortDto);
-        return ResponseEntity.ok(fullDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(fullDto);
     }
 
     public ResponseEntity<Object> getUserEventInfo(int userId, int eventId) {
@@ -76,6 +81,13 @@ public class UserService {
     public Object updateUserEvent(int userId, int eventId, UpdateEventUserRequest dto) {
         if (eventsRepository.findById(eventId).isEmpty()) {
             throw new BadRequestException("Не найден");
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        System.out.println("Время - " + dto.getEventDate());
+        if (dto.getEventDate() != null) {
+            if (LocalDateTime.parse(dto.getEventDate(), formatter).isBefore(LocalDateTime.now())) {
+                throw new BadRequestException("Некорректное время для обновления");
+            }
         }
         Events events = eventsRepository.findById(eventId).get();
         if (events.getState().equals(State.PUBLISHED)) {

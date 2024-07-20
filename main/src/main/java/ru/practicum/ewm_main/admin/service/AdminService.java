@@ -80,8 +80,10 @@ public class AdminService {
                                             int size) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<State> stateList = new ArrayList<>();
-        for (String str : states) {
-            stateList.add(State.valueOf(str));
+        if (states != null) {
+            for (String str : states) {
+                stateList.add(State.valueOf(str));
+            }
         }
         List<Events> eventsList = eventsRepository.getEventsWithUsersAndStatesAndCategories(users,
                     stateList,
@@ -90,10 +92,12 @@ public class AdminService {
                     LocalDateTime.parse(rangeEnd, formatter),
                     PageRequest.of(from / size, size));
         List<EventFullDto> eventFullDtoList = new ArrayList<>();
-        for (Events events : eventsList) {
-            CategoryDto categoryDto = CategoriesMapper.toCategoryDto(events.getCategory());
-            UserShortDto userShortDto = UserMapper.userShortDto(events.getInitiator());
-            eventFullDtoList.add(EventsMapper.toEventFullDto(events, categoryDto, userShortDto));
+        if (!eventsList.isEmpty()) {
+            for (Events events : eventsList) {
+                CategoryDto categoryDto = CategoriesMapper.toCategoryDto(events.getCategory());
+                UserShortDto userShortDto = UserMapper.userShortDto(events.getInitiator());
+                eventFullDtoList.add(EventsMapper.toEventFullDto(events, categoryDto, userShortDto));
+            }
         }
         return ResponseEntity.ok(eventFullDtoList);
     }
@@ -101,8 +105,10 @@ public class AdminService {
     public ResponseEntity<Object> updateEvents(int eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Events events = eventsRepository.findById(eventId).get();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        if (LocalDateTime.parse(updateEventAdminRequest.getEventDate(), formatter).isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Время ивента прошло");
+        if (updateEventAdminRequest.getEventDate() != null) {
+            if (LocalDateTime.parse(updateEventAdminRequest.getEventDate(), formatter).isBefore(LocalDateTime.now())) {
+                throw new BadRequestException("Время ивента прошло");
+            }
         }
         Events updateEvents = EventsMapper.updateForAdmin(events, updateEventAdminRequest);
         eventsRepository.save(updateEvents);
