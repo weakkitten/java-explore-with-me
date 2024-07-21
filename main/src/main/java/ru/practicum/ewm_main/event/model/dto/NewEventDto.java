@@ -21,10 +21,10 @@ public class NewEventDto {
     private String description;
     private String eventDate;
     private Location location;
-    private Boolean paid = false;
+    private Boolean paid;
     @PositiveOrZero
     private int participantLimit;
-    private Boolean requestModeration = true;
+    private Boolean requestModeration;
     @Length(min = 3, max = 120)
     private String title;
 }

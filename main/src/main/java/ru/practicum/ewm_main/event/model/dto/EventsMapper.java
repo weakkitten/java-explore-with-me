@@ -33,7 +33,7 @@ public class EventsMapper {
     }
 
     public static Events toEvent(NewEventDto dto, int userId) {
-        return Events.builder()
+        Events events = Events.builder()
                 .annotation(dto.getAnnotation())
                 .categoryId(dto.getCategory())
                 .description(dto.getDescription())
@@ -42,10 +42,20 @@ public class EventsMapper {
                 .lon(dto.getLocation().getLon())
                 .paid(dto.getPaid())
                 .participantLimit(dto.getParticipantLimit())
-                .requestModeration(dto.getRequestModeration())
                 .title(dto.getTitle())
                 .initiatorId(userId)
                 .build();
+        if (dto.getRequestModeration() == null) {
+            events.setRequestModeration(true);
+        } else {
+            events.setRequestModeration(dto.getRequestModeration());
+        }
+        if (dto.getPaid() == null) {
+            events.setPaid(false);
+        } else {
+            events.setPaid(dto.getPaid());
+        }
+        return events;
     }
 
     public static EventFullDto toEventFullDto(Events events, CategoryDto categoryDto, UserShortDto userShortDto) {

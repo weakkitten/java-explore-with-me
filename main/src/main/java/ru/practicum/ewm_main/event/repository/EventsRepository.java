@@ -128,71 +128,11 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                                           Pageable pageable);
     //Для админ/гетИвентс
     @Query("select e from Events e " +
-            "where e.initiatorId in ?1" +
-            "and e.state in ?2" +
-            "and e.categoryId in ?3" +
-            "and e.eventDate between ?4 and ?5")
-    List<Events> getEventsWithoutUsers(List<Integer> users,
-                                       List<String> states,
-                                       List<Integer> categories,
-                                       LocalDateTime rangeStart,
-                                       LocalDateTime rangeEnd,
-                                       Pageable pageable);
-
-    @Query("select e from Events e " +
-            "where e.initiatorId in ?1" +
-            "and e.state in ?2" +
-            "and e.categoryId in ?3" +
-            "and e.eventDate between ?4 and ?5")
-    List<Events> getEventsWithoutUsersAndStates(List<Integer> users,
-                                                List<String> states,
-                                                List<Integer> categories,
-                                                LocalDateTime rangeStart,
-                                                LocalDateTime rangeEnd,
-                                                Pageable pageable);
-
-    @Query("select e from Events e " +
-            "where e.initiatorId in ?1" +
-            "and e.state in ?2" +
-            "and e.categoryId in ?3" +
-            "and e.eventDate between ?4 and ?5")
-    List<Events> getEventsWithoutUsersAndStatesAndCategories(List<Integer> users,
-                                                             List<String> states,
-                                                             List<Integer> categories,
-                                                             LocalDateTime rangeStart,
-                                                             LocalDateTime rangeEnd,
-                                                             Pageable pageable);
-
-    @Query("select e from Events e " +
-            "where e.initiatorId in ?1" +
-            "and e.state in ?2" +
-            "and e.categoryId in ?3" +
-            "and e.eventDate between ?4 and ?5")
-    List<Events> getEventsWithUsers(List<Integer> users,
-                                           List<String> states,
-                                           List<Integer> categories,
-                                           LocalDateTime rangeStart,
-                                           LocalDateTime rangeEnd,
-                                           Pageable pageable);
-
-    @Query("select e from Events e " +
-            "where e.initiatorId in ?1" +
-            "and e.state in ?2" +
-            "and e.categoryId in ?3" +
-            "and e.eventDate between ?4 and ?5")
-    List<Events> getEventsWithUsersAndStates(List<Integer> users,
-                                    List<String> states,
-                                    List<Integer> categories,
-                                    LocalDateTime rangeStart,
-                                    LocalDateTime rangeEnd,
-                                    Pageable pageable);
-
-    @Query("select e from Events e " +
             "where e.initiatorId in ?1 " +
             "and e.state in ?2 " +
             "and e.categoryId in ?3 " +
             "and e.eventDate between ?4 and ?5")
-    List<Events> getEventsWithUsersAndStatesAndCategories(List<Integer> users,
+    List<Events> getEventsWithUsersAndStatesAndCategoriesAndTimes(List<Integer> users,
                                     List<State> states,
                                     List<Integer> categories,
                                     LocalDateTime rangeStart,
@@ -200,20 +140,126 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                     Pageable pageable);
 
     @Query("select e from Events e " +
-            "where e.initiatorId in ?1" +
-            "and e.categoryId in ?2" +
+            "where e.eventDate between ?1 and ?2")
+    List<Events> getEventsWithTimes(LocalDateTime rangeStart,
+                                    LocalDateTime rangeEnd,
+                                    Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.categoryId in ?1 " +
+            "and e.eventDate between ?2 and ?3")
+    List<Events> getEventsWithCategoryAndTimes(List<Integer> categories,
+                                               LocalDateTime rangeStart,
+                                               LocalDateTime rangeEnd,
+                                               Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.state in ?1 " +
+            "and e.categoryId in ?2 " +
             "and e.eventDate between ?3 and ?4")
-    List<Events> getEventsWithUsersAndCategoriesWithoutStates(List<Integer> users,
-                                                          List<Integer> categories,
-                                                          LocalDateTime rangeStart,
-                                                          LocalDateTime rangeEnd,
-                                                          Pageable pageable);
+    List<Events> getEventsWithStateAndCategoriesAndTimes(List<State> states,
+                                                         List<Integer> categories,
+                                                         LocalDateTime rangeStart,
+                                                         LocalDateTime rangeEnd,
+                                                         Pageable pageable);
 
     @Query("select e from Events e " +
             "where e.state in ?1 " +
             "and e.eventDate between ?2 and ?3")
-    List<Events> getEventsWithStates(List<State> states,
-                                     LocalDateTime rangeStart,
-                                     LocalDateTime rangeEnd,
-                                     Pageable pageable);
+    List<Events> getEventsWithStateAndTimes(List<State> states,
+                                                         LocalDateTime rangeStart,
+                                                         LocalDateTime rangeEnd,
+                                                         Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.initiatorId in ?1 " +
+            "and e.eventDate between ?2 and ?3")
+    List<Events> getEventsWithUsersAndTimes(List<Integer> users,
+                                            LocalDateTime rangeStart,
+                                            LocalDateTime rangeEnd,
+                                            Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.initiatorId in ?1 " +
+            "and e.categoryId in ?2 " +
+            "and e.eventDate between ?3 and ?4")
+    List<Events> getEventsWithUsersAndTimesAndCategories(List<Integer> users,
+                                                         List<Integer> categories,
+                                                         LocalDateTime rangeStart,
+                                                         LocalDateTime rangeEnd,
+                                                         Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.initiatorId in ?1 " +
+            "and e.state in ?2 " +
+            "and e.eventDate between ?3 and ?4")
+    List<Events> getEventsWithUsersAndStatesAndTimes(List<Integer> users,
+                                                     List<State> states,
+                                                     LocalDateTime rangeStart,
+                                                     LocalDateTime rangeEnd,
+                                                     Pageable pageable);
+    //Без времени
+    @Query("select e from Events e " +
+            "where e.eventDate > ?1")
+    List<Events> getEventsWithoutTimes(LocalDateTime rangeEnd,
+                                       Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.categoryId in ?1 " +
+            "and e.eventDate > ?2")
+    List<Events> getEventsWithCategory(List<Integer> categories,
+                                       LocalDateTime rangeEnd,
+                                       Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.state in ?1 " +
+            "and e.categoryId in ?2 " +
+            "and e.eventDate > ?3")
+    List<Events> getEventsWithStateAndCategories(List<State> states,
+                                                 List<Integer> categories,
+                                                 LocalDateTime rangeEnd,
+                                                 Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.state in ?1 " +
+            "and e.eventDate > ?2")
+    List<Events> getEventsWithState(List<State> states,
+                                    LocalDateTime rangeEnd,
+                                    Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.initiatorId in ?1 " +
+            "and e.eventDate > ?2")
+    List<Events> getEventsWithUsers(List<Integer> users,
+                                    LocalDateTime rangeEnd,
+                                    Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.initiatorId in ?1 " +
+            "and e.categoryId in ?2 " +
+            "and e.eventDate > ?3")
+    List<Events> getEventsWithUsersAndCategories(List<Integer> users,
+                                                 List<Integer> categories,
+                                                 LocalDateTime rangeEnd,
+                                                 Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.initiatorId in ?1 " +
+            "and e.state in ?2 " +
+            "and e.eventDate > ?3")
+    List<Events> getEventsWithUsersAndState(List<Integer> users,
+                                    List<State> states,
+                                    LocalDateTime rangeEnd,
+                                    Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.initiatorId in ?1 " +
+            "and e.state in ?2 " +
+            "and e.categoryId in ?3 " +
+            "and e.eventDate > ?4")
+    List<Events> getEventsWithUsersAndStatesAndCategoriesWithoutTimes(List<Integer> users,
+                                                                      List<State> states,
+                                                                      List<Integer> categories,
+                                                                      LocalDateTime rangeEnd,
+                                                                      Pageable pageable);
 }

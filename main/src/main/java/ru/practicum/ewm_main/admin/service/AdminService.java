@@ -79,18 +79,133 @@ public class AdminService {
                                             int from,
                                             int size) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        List<State> stateList = new ArrayList<>();
-        if (states != null) {
-            for (String str : states) {
-                stateList.add(State.valueOf(str));
+
+        List<Events> eventsList;
+        if (rangeEnd == null) {//без времени
+            if (users == null) {
+                if (states == null) {
+                    if (categories == null) {//без всего
+                        eventsList = eventsRepository.getEventsWithoutTimes(LocalDateTime.now(),
+                                                                            PageRequest.of(from / size, size));
+                    } else {//Без пользователей, states и времени, с категорией
+                        eventsList = eventsRepository.getEventsWithCategory(categories,
+                                                                            LocalDateTime.now(),
+                                                                            PageRequest.of(from / size, size));
+                    }
+                } else {
+                    List<State> stateList = new ArrayList<>();
+                    for (String str : states) {
+                        stateList.add(State.valueOf(str));
+                    }
+                    if (categories == null) {//без пользователей, категории и времени, с states
+                        eventsList = eventsRepository.getEventsWithState(stateList,
+                                                                         LocalDateTime.now(),
+                                                                         PageRequest.of(from / size, size));
+                    } else {//Без пользователей и времени, с states и категорией
+                        eventsList = eventsRepository.getEventsWithStateAndCategories(stateList,
+                                categories,
+                                LocalDateTime.now(),
+                                PageRequest.of(from / size, size));
+                    }
+                }
+            } else {//с пользователями
+                if (states == null) {
+                    if (categories == null) {//с пользователями
+                        eventsList = eventsRepository.getEventsWithUsers(users,
+                                LocalDateTime.now(),
+                                PageRequest.of(from / size, size));
+                    } else {//с пользователемя, и state
+                        eventsList = eventsRepository.getEventsWithUsersAndCategories(users,
+                                categories,
+                                LocalDateTime.now(),
+                                PageRequest.of(from / size, size));
+                    }
+                } else {
+                    List<State> stateList = new ArrayList<>();
+                    for (String str : states) {
+                        stateList.add(State.valueOf(str));
+                    }
+                    if (categories == null) {//С пользователями и state
+                        eventsList = eventsRepository.getEventsWithUsersAndState(users,
+                                stateList,
+                                LocalDateTime.now(),
+                                PageRequest.of(from / size, size));
+                    } else {//Вся выгрузка
+                        eventsList = eventsRepository.getEventsWithUsersAndStatesAndCategoriesWithoutTimes(users,
+                                stateList,
+                                categories,
+                                LocalDateTime.now(),
+                                PageRequest.of(from / size, size));
+                    }
+                }
+            }
+        } else {//без времени
+            if (users == null) {//без пользователей, с временем
+                if (states == null) {//без пользователей и states, с временем
+                    if (categories == null) {//без пользователей, states и категорий, с временем
+                        eventsList = eventsRepository.getEventsWithTimes(LocalDateTime.parse(rangeStart, formatter),
+                                LocalDateTime.parse(rangeEnd, formatter),
+                                PageRequest.of(from / size, size));
+                    } else {//Без пользователей, states, с временем и категорией
+                        eventsList = eventsRepository.getEventsWithCategoryAndTimes(categories,
+                                LocalDateTime.parse(rangeStart, formatter),
+                                LocalDateTime.parse(rangeEnd, formatter),
+                                PageRequest.of(from / size, size));
+                    }
+                } else {
+                    List<State> stateList = new ArrayList<>();
+                    for (String str : states) {
+                        stateList.add(State.valueOf(str));
+                    }
+                    if (categories == null) {//без пользователей и категорий, с временем и states
+                        eventsList = eventsRepository.getEventsWithStateAndTimes(stateList,
+                                LocalDateTime.parse(rangeStart, formatter),
+                                LocalDateTime.parse(rangeEnd, formatter),
+                                PageRequest.of(from / size, size));
+                    } else {//Без пользователей, с временем, категорией и states
+                        eventsList = eventsRepository.getEventsWithStateAndCategoriesAndTimes(stateList,
+                                categories,
+                                LocalDateTime.parse(rangeStart, formatter),
+                                LocalDateTime.parse(rangeEnd, formatter),
+                                PageRequest.of(from / size, size));
+                    }
+                }
+            } else {//с пользователями
+                if (states == null) {
+                    if (categories == null) {//с пользователями и временем
+                        eventsList = eventsRepository.getEventsWithUsersAndTimes(users,
+                                LocalDateTime.parse(rangeStart, formatter),
+                                LocalDateTime.parse(rangeEnd, formatter),
+                                PageRequest.of(from / size, size));
+                    } else {//с пользователемя, временем и state
+                        eventsList = eventsRepository.getEventsWithUsersAndTimesAndCategories(users,
+                                categories,
+                                LocalDateTime.parse(rangeStart, formatter),
+                                LocalDateTime.parse(rangeEnd, formatter),
+                                PageRequest.of(from / size, size));
+                    }
+                } else {
+                    List<State> stateList = new ArrayList<>();
+                    for (String str : states) {
+                        stateList.add(State.valueOf(str));
+                    }
+                    if (categories == null) {//Выгрузка без категорий
+                        eventsList = eventsRepository.getEventsWithUsersAndStatesAndTimes(users,
+                                stateList,
+                                LocalDateTime.parse(rangeStart, formatter),
+                                LocalDateTime.parse(rangeEnd, formatter),
+                                PageRequest.of(from / size, size));
+                    } else {//Вся выгрузка
+                        eventsList = eventsRepository.getEventsWithUsersAndStatesAndCategoriesAndTimes(users,
+                                stateList,
+                                categories,
+                                LocalDateTime.parse(rangeStart, formatter),
+                                LocalDateTime.parse(rangeEnd, formatter),
+                                PageRequest.of(from / size, size));
+                    }
+                }
             }
         }
-        List<Events> eventsList = eventsRepository.getEventsWithUsersAndStatesAndCategories(users,
-                    stateList,
-                    categories,
-                    LocalDateTime.parse(rangeStart, formatter),
-                    LocalDateTime.parse(rangeEnd, formatter),
-                    PageRequest.of(from / size, size));
         List<EventFullDto> eventFullDtoList = new ArrayList<>();
         if (!eventsList.isEmpty()) {
             for (Events events : eventsList) {
