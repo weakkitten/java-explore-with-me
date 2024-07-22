@@ -17,6 +17,7 @@ import ru.practicum.ewm_main.compilation.model.dto.NewCompilationDto;
 import ru.practicum.ewm_main.compilation.model.dto.UpdateCompilationRequest;
 import ru.practicum.ewm_main.compilation.repository.CompilationRepository;
 import ru.practicum.ewm_main.error.exception.BadRequestException;
+import ru.practicum.ewm_main.error.exception.ConflictException;
 import ru.practicum.ewm_main.event.model.CompilationsEvents;
 import ru.practicum.ewm_main.event.model.Events;
 import ru.practicum.ewm_main.event.model.Location;
@@ -62,7 +63,9 @@ public class AdminService {
 
     public ResponseEntity<Object> updateCategories(int catId, NewCategoryDto dto) {
         if (categoriesRepository.findByName(dto.getName()) != null) {
-            throw new BadRequestException("Некорректный запрос");
+            if (!categoriesRepository.findById(catId).get().getName().equals(dto.getName())) {
+                throw new ConflictException("Попытка изменить имя категории на существующее");
+            }
         }
         Categories categories = CategoriesMapper.toCategories(dto);
         categories.setId(catId);
@@ -234,8 +237,11 @@ public class AdminService {
         return ResponseEntity.ok(eventFullDtoDto);
     }
 
-    public ResponseEntity<Object> getUsers(int userId, int from, int size) {
-        return ResponseEntity.ok(userRepository.findById(userId, PageRequest.of(from > 0 ? from / size : 0, size)));
+    public ResponseEntity<Object> getUsers(List<Integer> ids, int from, int size) {
+        if (ids == null) {
+            return ResponseEntity.ok(userRepository.findAll(PageRequest.of(from > 0 ? from / size : 0, size)).toList());
+        }
+        return ResponseEntity.ok(userRepository.findById(ids, PageRequest.of(from > 0 ? from / size : 0, size)));
     }
 
     public ResponseEntity<Object> addNewUser(NewUserDto dto) {
@@ -243,7 +249,7 @@ public class AdminService {
         userRepository.save(user);
         UserDto userDto = UserMapper.toUserDto(userRepository.findByNameAndEmail(user.getName(),
                 user.getEmail()));
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
     }
 
     public ResponseEntity<Object> deleteUser(int userId) {
@@ -256,15 +262,34 @@ public class AdminService {
         Compilation compilation = CompilationMapper.toCompilation(dto);
         compilationRepository.save(compilation);
         List<CompilationsEvents> compilationsEventsList = new ArrayList<>();
-        for (Integer eventId : eventList) {
-            CompilationsEvents compilationsEvents = CompilationsEvents.builder()
-                    .eventId(eventId)
-                    .compilationId(compilation.getId())
-                    .build();
-            compilationsEventsList.add(compilationsEvents);
+        if (dto.getEvents() != null) {
+            for (Integer eventId : eventList) {
+                CompilationsEvents compilationsEvents = CompilationsEvents.builder()
+                        .eventId(eventId)
+                        .compilationId(compilation.getId())
+                        .build();
+                compilationsEventsList.add(compilationsEvents);
+            }
+            compilationsEventsRepository.saveAll(compilationsEventsList);
         }
-        compilationsEventsRepository.saveAll(compilationsEventsList);
-        return ResponseEntity.ok(null);
+        Compilation compilationTemp = compilationRepository.findByPinnedAndTitle(dto.isPinned(), dto.getTitle());
+        List<CompilationsEvents> compilationsEvents = compilationsEventsRepository
+                .findByCompilationId(compilationTemp.getId());
+        List<EventShortDto> eventShortDtoList = new ArrayList<>();
+        if (compilationsEvents != null) {
+            List<Integer> eventsIdList = new ArrayList<>();
+            for (CompilationsEvents events : compilationsEvents) {
+                eventsIdList.add(events.getEventId());
+            }
+            List<Events> eventsList = eventsRepository.findAll(eventsIdList);
+            for (Events events : eventsList) {
+                EventShortDto shortDto = EventsMapper.toEventShortDto(events);
+                eventShortDtoList.add(shortDto);
+            }
+        }
+        CompilationDto compilationDto = CompilationMapper
+                .toCompilationDto(compilationTemp, eventShortDtoList);
+        return ResponseEntity.status(HttpStatus.CREATED).body(compilationDto);
     }
 
     public ResponseEntity<Object> deleteCompilations(int compId) {
@@ -278,12 +303,14 @@ public class AdminService {
         List<Integer> eventList = updateCompilationRequest.getEvents();
         List<CompilationsEvents> compilationsEventsList = compilationsEventsRepository.findByCompilationId(compId);
         compilationsEventsRepository.deleteAll(compilationsEventsList);
-        for (Integer eventId : eventList) {
-            CompilationsEvents compilationsEvents = CompilationsEvents.builder()
-                    .eventId(eventId)
-                    .compilationId(compId)
-                    .build();
-            compilationsEventsRepository.save(compilationsEvents);
+        if (updateCompilationRequest.getEvents() != null) {
+            for (Integer eventId : eventList) {
+                CompilationsEvents compilationsEvents = CompilationsEvents.builder()
+                        .eventId(eventId)
+                        .compilationId(compId)
+                        .build();
+                compilationsEventsRepository.save(compilationsEvents);
+            }
         }
         Compilation compilation = compilationRepository.findById(compId).get();
         Compilation compilationUpdate = CompilationMapper.updateCompilation(updateCompilationRequest,

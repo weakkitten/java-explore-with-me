@@ -13,7 +13,10 @@ import ru.practicum.ewm_main.compilation.repository.CompilationRepository;
 public class CompilationService {
     private final CompilationRepository repository;
 
-    public ResponseEntity<Object> getCompilations(boolean pinned, int from, int size) {
+    public ResponseEntity<Object> getCompilations(Boolean pinned, int from, int size) {
+        if (pinned == null) {
+            return ResponseEntity.ok(repository.findAll(PageRequest.of(from / size, size)).toList());
+        }
         return ResponseEntity.status(HttpStatus.OK)
                               .body(repository.findByPinned(pinned,
                                                             PageRequest.of(from / size, size)));

@@ -23,7 +23,7 @@ public class AdminControllers {
     private final AdminService service;
 
     @PostMapping("/categories")
-    public ResponseEntity<Object> addNewCategories(@RequestBody NewCategoryDto dto) {
+    public ResponseEntity<Object> addNewCategories(@RequestBody @Valid NewCategoryDto dto) {
         log.info("===============");
         log.info("Добавление новой категории из админки - " + dto);
         log.info("===============");
@@ -40,7 +40,7 @@ public class AdminControllers {
 
     @PatchMapping("/categories/{catId}")
     public ResponseEntity<Object> updateCategories(@PathVariable int catId,
-                                                   @RequestBody NewCategoryDto dto) {
+                                                   @RequestBody @Valid NewCategoryDto dto) {
         log.info("===============");
         log.info("Обновление категории из админки - " + dto);
         log.info("===============");
@@ -71,17 +71,17 @@ public class AdminControllers {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<Object> getUsers(@RequestParam int userId,
-                               @RequestParam(defaultValue = "0") int from,
-                               @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Object> getUsers(@RequestParam(required = false) List<Integer> ids,
+                                           @RequestParam(defaultValue = "0") int from,
+                                           @RequestParam(defaultValue = "10") int size) {
         log.info("===============");
-        log.info("Выборка пользователей через админку - " + userId);
+        log.info("Выборка пользователей через админку - " + ids);
         log.info("===============");
-        return service.getUsers(userId, from, size);
+        return service.getUsers(ids, from, size);
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Object> addNewUser(@RequestBody NewUserDto dto) {
+    public ResponseEntity<Object> addNewUser(@RequestBody @Valid NewUserDto dto) {
         log.info("===============");
         log.info("Добавление нового пользователя из админки - " + dto);
         log.info("===============");
@@ -97,7 +97,7 @@ public class AdminControllers {
     }
 
     @PostMapping("/compilations")
-    public ResponseEntity<Object> addNewCompilation(@RequestBody NewCompilationDto dto) {
+    public ResponseEntity<Object> addNewCompilation(@RequestBody @Valid NewCompilationDto dto) {
         log.info("===============");
         log.info("Добавление новой комплиментации - " + dto);
         log.info("===============");
@@ -114,7 +114,7 @@ public class AdminControllers {
 
     @PatchMapping("/compilations/{compId}")
     public ResponseEntity<Object> updateCompilation(@PathVariable int compId,
-                                  @RequestBody UpdateCompilationRequest updateCompilationRequest) {
+                                                    @RequestBody @Valid UpdateCompilationRequest updateCompilationRequest) {
         log.info("===============");
         log.info("Обновление комплиментации - " + compId);
         log.info("===============");

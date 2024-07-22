@@ -13,7 +13,8 @@ public class CategoriesService {
     private final CategoriesRepository repository;
 
     public ResponseEntity<Object> getCategories(int from, int size) {
-        return ResponseEntity.status(HttpStatus.OK).body(repository.findAll(PageRequest.of(from / size, size)));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(repository.findAll(PageRequest.of(from / size, size)).toList());
     }
 
     public ResponseEntity<Object> getCategoriesById(int catId) {

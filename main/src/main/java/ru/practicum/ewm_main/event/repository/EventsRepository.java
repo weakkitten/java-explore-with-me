@@ -14,118 +14,648 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
 
     Events findByInitiatorIdAndAnnotation(int userId, String annotation);
     Events findByIdAndState(int id, State state);
-
+    //EventController getEvents без всего, по просмотрам
     @Query("select e from Events e " +
-           "where lower(e.annotation) like '%?1%' " +
-           "or lower(e.description) like '%?1%' " +
-            "and e.categoryId in ?2" +
-           "and e.paid = ?3 " +
-           "and e.eventDate between ?4 and ?5 " +
-           "and e.confirmedRequests < e.participantLimit " +
-           "order by e.views desc")
-    List<Events> getEventsAvailableOrderByViews(String text,
-                                                List<Integer> categories,
-                                                boolean paid,
-                                                LocalDateTime rangeStart,
-                                                LocalDateTime rangeEnd,
-                                                Pageable pageable);
-
-    @Query("select e from Events e " +
-            "where lower(e.annotation) like '%?1%' " +
-            "or lower(e.description) like '%?1%' " +
-            "and e.categoryId in ?2" +
-            "and e.paid = ?3 " +
-            "and e.eventDate between ?4 and ?5 " +
+            "where e.paid = true " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?1 " +
             "order by e.views desc")
-    List<Events> getEventsAllOrderByViews(String text,
-                                          List<Integer> categories,
-                                          boolean paid,
-                                          LocalDateTime rangeStart,
-                                          LocalDateTime rangeEnd,
+    List<Events> getEventsPaidAndAvailable(LocalDateTime now,
+                                           Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.eventDate > ?1 " +
+            "order by e.views desc")
+    List<Events> getEventsPaid(LocalDateTime now,
+                               Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?1 " +
+            "order by e.views desc")
+    List<Events> getEventsAvailable(LocalDateTime now,
+                                    Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.eventDate > ?1 " +
+            "order by e.views desc")
+    List<Events> getEventsAll(LocalDateTime now,
+                              Pageable pageable);
+    //без всего, по эндДейт
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?1 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsPaidAndAvailableByDate(LocalDateTime now,
+                                                 Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.eventDate > ?1 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsPaidByDate(LocalDateTime now,
+                                     Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?1 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsAvailableByDate(LocalDateTime now,
                                           Pageable pageable);
 
     @Query("select e from Events e " +
-            "where lower(e.annotation) like '%?1%' " +
-            "or lower(e.description) like '%?1%' " +
-            "and e.categoryId in ?2" +
-            "and e.paid = ?3 " +
-            "and e.eventDate between ?4 and ?5 " +
-            "and e.confirmedRequests < e.participantLimit " +
+            "where e.eventDate > ?1 " +
             "order by e.eventDate desc")
-    List<Events> getEventsAvailableOrderByEventDate(String text,
-                                                    List<Integer> categories,
-                                                    boolean paid,
-                                                    LocalDateTime rangeStart,
-                                                    LocalDateTime rangeEnd,
-                                                    Pageable pageable);
-
+    List<Events> getEventsAllByDate(LocalDateTime now,
+                                    Pageable pageable);
+    //withCategories
     @Query("select e from Events e " +
-            "where lower(e.annotation) like '%?1%' " +
-            "or lower(e.description) like '%?1%' " +
-            "and e.categoryId in ?2" +
-            "and e.paid = ?3 " +
-            "and e.eventDate between ?4 and ?5 " +
-            "order by e.eventDate desc")
-    List<Events> getEventsAllOrderByEventDate(String text,
-                                              List<Integer> categories,
-                                              boolean paid,
-                                              LocalDateTime rangeStart,
-                                              LocalDateTime rangeEnd,
-                                              Pageable pageable);
-
-    @Query("select e from Events e " +
-            "where lower(e.annotation) like '%?1%' " +
-            "or lower(e.description) like '%?1%' " +
-            "and e.categoryId in ?2" +
-            "and e.paid = ?3 " +
-            "and e.eventDate > ?4 " +
+            "where e.paid = true " +
+            "and e.categoryId in ?1 " +
             "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?2 " +
             "order by e.views desc")
-    List<Events> getEventsAvailableOrderByViewsWithoutTimes(String text,
-                                                            List<Integer> categories,
-                                                            boolean paid,
-                                                            LocalDateTime rangeStart,
-                                                            Pageable pageable);
-
-    @Query("select e from Events e " +
-            "where lower(e.annotation) like '%?1%' " +
-            "or lower(e.description) like '%?1%' " +
-            "and e.categoryId in ?2" +
-            "and e.paid = ?3 " +
-            "and e.eventDate > ?4 " +
-            "order by e.views desc")
-    List<Events> getEventsAllOrderByViewsWithoutTimes(String text,
-                                                      List<Integer> categories,
-                                                      boolean paid,
-                                                      LocalDateTime rangeStart,
+    List<Events> getEventsWitchCatAndPaidAndAvailable(List<Integer> categories,
+                                                      LocalDateTime now,
                                                       Pageable pageable);
 
     @Query("select e from Events e " +
-            "where lower(e.annotation) like '%?1%' " +
-            "or lower(e.description) like '%?1%' " +
-            "and e.categoryId in ?2" +
-            "and e.paid = ?3 " +
-            "and e.eventDate > ?4 " +
-            "and e.confirmedRequests < e.participantLimit " +
-            "order by e.eventDate desc")
-    List<Events> getEventsAvailableOrderByEventDateWithoutTimes(String text,
-                                                                List<Integer> categories,
-                                                                boolean paid,
-                                                                LocalDateTime rangeStart,
-                                                                Pageable pageable);
+            "where e.paid = true " +
+            "and e.categoryId in ?1 " +
+            "and e.eventDate > ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsPaidAndCat(List<Integer> categories,
+                                     LocalDateTime now,
+                                     Pageable pageable);
 
     @Query("select e from Events e " +
-            "where lower(e.annotation) like '%?1%' " +
-            "or lower(e.description) like '%?1%' " +
-            "and e.categoryId in ?2" +
-            "and e.paid = ?3 " +
-            "and e.eventDate > ?4 " +
+            "where e.categoryId in ?1 " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsAvailableAndCat(List<Integer> categories,
+                                          LocalDateTime now,
+                                          Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.categoryId in ?1 " +
+            "and e.eventDate > ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsAllAndCat(List<Integer> categories,
+                                    LocalDateTime now,
+                                    Pageable pageable);
+    //withCategoriesOrderByDate
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.categoryId in ?1 " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?2 " +
             "order by e.eventDate desc")
-    List<Events> getEventsAllOrderByEventDateWithoutTimes(String text,
-                                                          List<Integer> categories,
-                                                          boolean paid,
-                                                          LocalDateTime rangeStart,
-                                                          Pageable pageable);
+    List<Events> getEventsWitchCatAndPaidAndAvailableByDate(List<Integer> categories,
+                                                            LocalDateTime now,
+                                                            Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.categoryId in ?1 " +
+            "and e.eventDate > ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsPaidAndCatByDate(List<Integer> categories,
+                                           LocalDateTime now,
+                                           Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.categoryId in ?1 " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsAvailableAndCatByDate(List<Integer> categories,
+                                                LocalDateTime now,
+                                                Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.categoryId in ?1 " +
+            "and e.eventDate > ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsAllAndCatByDate(List<Integer> categories,
+                                          LocalDateTime now,
+                                          Pageable pageable);
+    //есть текст, нет времени
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.paid = true " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsTextAndAvailableAndPaid(String text,
+                                                  LocalDateTime now,
+                                                  Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsTextAndAvailable(String text,
+                                           LocalDateTime now,
+                                           Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.paid = true " +
+            "and e.eventDate > ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsTextAndPaid(String text,
+                                      LocalDateTime now,
+                                      Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.eventDate > ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsText(String text,
+                               LocalDateTime now,
+                               Pageable pageable);
+    //orderByDate
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.paid = true " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsTextAndAvailableAndPaidByDate(String text,
+                                                        LocalDateTime now,
+                                                        Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsTextAndAvailableByDate(String text,
+                                                 LocalDateTime now,
+                                                 Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.paid = true " +
+            "and e.eventDate > ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsTextAndPaidByDate(String text,
+                                            LocalDateTime now,
+                                            Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.eventDate > ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsTextByDate(String text,
+                                     LocalDateTime now,
+                                     Pageable pageable);
+    //с текстом и категорией, без времени
+
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.categoryId in ?2" +
+            "and e.paid = true " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?3 " +
+            "order by e.views desc")
+    List<Events> getEventsTextAndCategoriesAndAvailableAndPaid(String text,
+                                                               List<Integer> categories,
+                                                               LocalDateTime now,
+                                                               Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.categoryId in ?2" +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?3 " +
+            "order by e.views desc")
+    List<Events> getEventsTextAndCategoriesAndAvailable(String text,
+                                                        List<Integer> categories,
+                                                        LocalDateTime now,
+                                                        Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.categoryId in ?2 " +
+           "and e.paid = true " +
+           "and e.eventDate > ?3 " +
+           "order by e.views desc")
+    List<Events> getEventsTextAndCategoriesAndPaid(String text,
+                                                   List<Integer> categories,
+                                                   LocalDateTime times,
+                                                   Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.categoryId in ?2 " +
+            "and e.eventDate > ?3 " +
+            "order by e.views desc")
+    List<Events> getEventsTextAndCategories(String text,
+                                            List<Integer> categories,
+                                            LocalDateTime times,
+                                            Pageable pageable);
+    //orderByDate
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.categoryId in ?2 " +
+            "and e.paid = true " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?3 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsTextAndCategoriesAndAvailableAndPaidByDate(String text,
+                                                                     List<Integer> categories,
+                                                                     LocalDateTime now,
+                                                                     Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.categoryId in ?2" +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate > ?3 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsTextAndCategoriesAndAvailableByDate(String text,
+                                                              List<Integer> categories,
+                                                              LocalDateTime now,
+                                                              Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.categoryId in ?2" +
+            "and e.paid = true " +
+            "and e.eventDate > ?3 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsTextAndCategoriesAndPaidByDate(String text,
+                                                         List<Integer> categories,
+                                                         LocalDateTime now,
+                                                         Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where (lower(e.annotation) like ?1 " +
+            "or lower(e.description) like ?1) " +
+            "and e.categoryId in ?2" +
+            "and e.eventDate > ?3 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsTextAndCategoriesByDate(String text,
+                                                  List<Integer> categories,
+                                                  LocalDateTime now,
+                                                  Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate between ?1 and ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsPaidAndAvailable(LocalDateTime start,
+                                           LocalDateTime end,
+                                           Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.eventDate between ?1 and ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsPaid(LocalDateTime start,
+                               LocalDateTime end,
+                               Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate between ?1 and ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsAvailable(LocalDateTime start,
+                                    LocalDateTime end,
+                                    Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.eventDate between ?1 and ?2 " +
+            "order by e.views desc")
+    List<Events> getEventsAll(LocalDateTime start,
+                              LocalDateTime end,
+                              Pageable pageable);
+    //без всего, по эндДейт
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate between ?1 and ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsPaidAndAvailableByDate(LocalDateTime start,
+                                                 LocalDateTime end,
+                                                 Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.eventDate between ?1 and ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsPaidByDate(LocalDateTime start,
+                                     LocalDateTime end,
+                                     Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate between ?1 and ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsAvailableByDate(LocalDateTime start,
+                                          LocalDateTime end,
+                                          Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.eventDate between ?1 and ?2 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsAllByDate(LocalDateTime start,
+                                    LocalDateTime end,
+                                    Pageable pageable);
+    //withCategories
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.categoryId in ?1 " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate between ?2 and ?3 " +
+            "order by e.views desc")
+    List<Events> getEventsWitchCatAndPaidAndAvailable(List<Integer> categories,
+                                                      LocalDateTime start,
+                                                      LocalDateTime end,
+                                                      Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.categoryId in ?1 " +
+            "and e.eventDate between ?2 and ?3 " +
+            "order by e.views desc")
+    List<Events> getEventsPaidAndCat(List<Integer> categories,
+                                     LocalDateTime start,
+                                     LocalDateTime end,
+                                     Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.categoryId in ?1 " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate between ?2 and ?3 " +
+            "order by e.views desc")
+    List<Events> getEventsAvailableAndCat(List<Integer> categories,
+                                          LocalDateTime start,
+                                          LocalDateTime end,
+                                          Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.categoryId in ?1 " +
+            "and e.eventDate between ?2 and ?3 " +
+            "order by e.views desc")
+    List<Events> getEventsAllAndCat(List<Integer> categories,
+                                    LocalDateTime start,
+                                    LocalDateTime end,
+                                    Pageable pageable);
+    //withCategoriesOrderByDate
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.categoryId in ?1 " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate between ?2 and ?3 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsWitchCatAndPaidAndAvailableByDate(List<Integer> categories,
+                                                            LocalDateTime start,
+                                                            LocalDateTime end,
+                                                            Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.paid = true " +
+            "and e.categoryId in ?1 " +
+            "and e.eventDate between ?2 and ?3 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsPaidAndCatByDate(List<Integer> categories,
+                                           LocalDateTime start,
+                                           LocalDateTime end,
+                                           Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.categoryId in ?1 " +
+            "and e.confirmedRequests < e.participantLimit " +
+            "and e.eventDate between ?2 and ?3 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsAvailableAndCatByDate(List<Integer> categories,
+                                                LocalDateTime start,
+                                                LocalDateTime end,
+                                                Pageable pageable);
+
+    @Query("select e from Events e " +
+            "where e.categoryId in ?1 " +
+            "and e.eventDate between ?2 and ?3 " +
+            "order by e.eventDate desc")
+    List<Events> getEventsAllAndCatByDate(List<Integer> categories,
+                                          LocalDateTime start,
+                                          LocalDateTime end,
+                                          Pageable pageable);
+    //есть текст, нет времени
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.paid = true " +
+           "and e.confirmedRequests < e.participantLimit " +
+           "and e.eventDate between ?2 and ?3 " +
+           "order by e.views desc")
+    List<Events> getEventsTextAndAvailableAndPaid(String text,
+                                                  LocalDateTime start,
+                                                  LocalDateTime end,
+                                                  Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.confirmedRequests < e.participantLimit " +
+           "and e.eventDate between ?2 and ?3 " +
+           "order by e.views desc")
+    List<Events> getEventsTextAndAvailable(String text,
+                                           LocalDateTime start,
+                                           LocalDateTime end,
+                                           Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.paid = true " +
+           "and e.eventDate between ?2 and ?3 " +
+           "order by e.views desc")
+    List<Events> getEventsTextAndPaid(String text,
+                                      LocalDateTime start,
+                                      LocalDateTime end,
+                                      Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.eventDate between ?2 and ?3 " +
+           "order by e.views desc")
+    List<Events> getEventsText(String text,
+                               LocalDateTime start,
+                               LocalDateTime end,
+                               Pageable pageable);
+    //orderByDate
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.paid = true " +
+           "and e.confirmedRequests < e.participantLimit " +
+           "and e.eventDate between ?2 and ?3 " +
+           "order by e.eventDate desc")
+    List<Events> getEventsTextAndAvailableAndPaidByDate(String text,
+                                                        LocalDateTime start,
+                                                        LocalDateTime end,
+                                                        Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.confirmedRequests < e.participantLimit " +
+           "and e.eventDate between ?2 and ?3 " +
+           "order by e.eventDate desc")
+    List<Events> getEventsTextAndAvailableByDate(String text,
+                                                 LocalDateTime start,
+                                                 LocalDateTime end,
+                                                 Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.paid = true " +
+           "and e.eventDate between ?2 and ?3 " +
+           "order by e.eventDate desc")
+    List<Events> getEventsTextAndPaidByDate(String text,
+                                            LocalDateTime start,
+                                            LocalDateTime end,
+                                            Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.eventDate between ?2 and ?3 " +
+           "order by e.eventDate desc")
+    List<Events> getEventsTextByDate(String text,
+                                     LocalDateTime start,
+                                     LocalDateTime end,
+                                     Pageable pageable);
+    //с текстом и категорией, без времени
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.categoryId in ?2" +
+           "and e.paid = true " +
+           "and e.confirmedRequests < e.participantLimit " +
+           "and e.eventDate between ?3 and ?4 " +
+           "order by e.views desc")
+    List<Events> getEventsTextAndCategoriesAndAvailableAndPaid(String text,
+                                                               List<Integer> categories,
+                                                               LocalDateTime start,
+                                                               LocalDateTime end,
+                                                               Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.categoryId in ?2" +
+           "and e.confirmedRequests < e.participantLimit " +
+           "and e.eventDate between ?3 and ?4 " +
+           "order by e.views desc")
+    List<Events> getEventsTextAndCategoriesAndAvailable(String text,
+                                                        List<Integer> categories,
+                                                        LocalDateTime start,
+                                                        LocalDateTime end,
+                                                        Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.categoryId in ?2" +
+           "and e.paid = true " +
+           "and e.eventDate between ?3 and ?4 " +
+           "order by e.views desc")
+    List<Events> getEventsTextAndCategoriesAndPaid(String text,
+                                                   List<Integer> categories,
+                                                   LocalDateTime start,
+                                                   LocalDateTime end,
+                                                   Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.categoryId in ?2" +
+           "and e.eventDate between ?3 and ?4 " +
+           "order by e.views desc")
+    List<Events> getEventsTextAndCategories(String text,
+                                            List<Integer> categories,
+                                            LocalDateTime start,
+                                            LocalDateTime end,
+                                            Pageable pageable);
+    //orderByDate
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.categoryId in ?2" +
+           "and e.paid = true " +
+           "and e.confirmedRequests < e.participantLimit " +
+           "and e.eventDate between ?3 and ?4 " +
+           "order by e.eventDate desc")
+    List<Events> getEventsTextAndCategoriesAndAvailableAndPaidByDate(String text,
+                                                                     List<Integer> categories,
+                                                                     LocalDateTime start,
+                                                                     LocalDateTime end,
+                                                                     Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.categoryId in ?2" +
+           "and e.confirmedRequests < e.participantLimit " +
+           "and e.eventDate between ?3 and ?4 " +
+           "order by e.eventDate desc")
+    List<Events> getEventsTextAndCategoriesAndAvailableByDate(String text,
+                                                              List<Integer> categories,
+                                                              LocalDateTime start,
+                                                              LocalDateTime end,
+                                                              Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.categoryId in ?2" +
+           "and e.paid = true " +
+           "and e.eventDate between ?3 and ?4 " +
+           "order by e.eventDate desc")
+    List<Events> getEventsTextAndCategoriesAndPaidByDate(String text,
+                                                         List<Integer> categories,
+                                                         LocalDateTime start,
+                                                         LocalDateTime end,
+                                                         Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where (lower(e.annotation) like ?1 " +
+           "or lower(e.description) like ?1) " +
+           "and e.categoryId in ?2" +
+           "and e.eventDate between ?3 and ?4 " +
+           "order by e.eventDate desc")
+    List<Events> getEventsTextAndCategoriesByDate(String text,
+                                                  List<Integer> categories,
+                                                  LocalDateTime start,
+                                                  LocalDateTime end,
+                                                  Pageable pageable);
     //Для админ/гетИвентс
     @Query("select e from Events e " +
             "where e.initiatorId in ?1 " +
@@ -262,4 +792,8 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                                                       List<Integer> categories,
                                                                       LocalDateTime rangeEnd,
                                                                       Pageable pageable);
+
+    @Query("select e from Events e " +
+           "where e.id in ?1")
+    List<Events> findAll(List<Integer> eventsIdList);
 }

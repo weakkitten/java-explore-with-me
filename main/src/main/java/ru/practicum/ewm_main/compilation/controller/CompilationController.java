@@ -14,7 +14,7 @@ public class CompilationController {
     private final CompilationService service;
 
     @GetMapping
-    public ResponseEntity<Object> getCompilations(@RequestParam boolean pinned,
+    public ResponseEntity<Object> getCompilations(@RequestParam(required = false) Boolean pinned,
                                                   @RequestParam(defaultValue = "0") int from,
                                                   @RequestParam(defaultValue = "10") int size) {
         log.info("===============");

@@ -13,8 +13,8 @@ import javax.persistence.*;
 @ToString
 @EqualsAndHashCode
 @Table(name = "categories", schema = "public",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "id")
+        uniqueConstraints = {@UniqueConstraint(columnNames = "id"),
+                @UniqueConstraint(columnNames = "name")
         })
 public class Categories {
     @Id

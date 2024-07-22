@@ -4,6 +4,8 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.ewm_main.compilation.model.Compilation;
 import ru.practicum.ewm_main.event.model.dto.EventShortDto;
 
+import java.util.List;
+
 @UtilityClass
 public class CompilationMapper {
     public static Compilation updateCompilation(UpdateCompilationRequest updateCompilationRequest,
@@ -20,7 +22,7 @@ public class CompilationMapper {
                 .build();
     }
 
-    public static CompilationDto toCompilationDto(Compilation compilation, EventShortDto dto) {
+    public static CompilationDto toCompilationDto(Compilation compilation, List<EventShortDto> dto) {
         return CompilationDto.builder()
                 .id(compilation.getId())
                 .events(dto)
