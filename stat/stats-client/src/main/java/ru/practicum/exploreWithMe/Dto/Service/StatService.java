@@ -3,7 +3,6 @@ package ru.practicum.exploreWithMe.Dto.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.practicum.exploreWithMe.Dto.error.exception.BadRequestException;
-import ru.practicum.exploreWithMe.Dto.model.ViewStatsInterface;
 import ru.practicum.exploreWithMe.Dto.repository.StatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.exploreWithMe.Dto.error.exception.BadRequestException;
 
-
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
