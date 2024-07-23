@@ -12,7 +12,7 @@ import ru.practicum.exploreWithMe.Dto.error.exception.BadRequestException;
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequestException(final BadRequestException e) {//400
+    public ErrorResponse handleBadRequestException(final BadRequestException e) {
         log.debug("Конфликт данных с БД");
         return new ErrorResponse("Bad request", HttpStatus.BAD_REQUEST, e.getMessage());
     }
