@@ -127,7 +127,7 @@ public class AdminService {
                 }
             } else {
                 if (states == null) {
-                    if (categories == null) {//с пользователями
+                    if (categories == null) {
                         eventsList = eventsRepository.getEventsWithUsers(users,
                                 LocalDateTime.now(),
                                 PageRequest.of(from / size, size));

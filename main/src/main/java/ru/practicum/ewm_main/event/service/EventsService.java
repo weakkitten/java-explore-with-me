@@ -66,7 +66,7 @@ public class EventsService {
                             } else {
                                 eventsList = repository.getEventsPaidAndAvailableByDate(times, pageable);
                             }
-                        } else {//платные, все, без категории, времени и текста
+                        } else {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsPaid(times, pageable);
                             } else {

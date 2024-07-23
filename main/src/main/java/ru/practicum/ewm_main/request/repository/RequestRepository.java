@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<Request, Integer> {
     List<Request> findByEvent(int eventId);
+
     @Query("select r from Request r " +
            "where r.id in ?1 ")
     List<Request> findByIds(List<Integer> ids);
