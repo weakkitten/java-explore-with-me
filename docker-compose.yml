@@ -34,4 +34,4 @@ services:
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
-      - POSTGRES_DB=ewm-stats
+      - POSTGRES_DB=ewm-main
