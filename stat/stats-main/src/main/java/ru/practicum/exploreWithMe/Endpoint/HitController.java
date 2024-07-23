@@ -5,12 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.exploreWithMe.Dto.Service.StatService;
-import ru.practicum.exploreWithMe.Dto.model.ViewStatsInterface;
 import ru.practicum.exploreWithMe.Dto.model.Hit;
-
 import java.util.List;
-import java.util.Objects;
-
 
 @RestController
 @RequestMapping(path = "")
