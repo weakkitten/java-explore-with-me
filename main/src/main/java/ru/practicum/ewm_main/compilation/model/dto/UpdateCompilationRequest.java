@@ -3,8 +3,6 @@ package ru.practicum.ewm_main.compilation.model.dto;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Data

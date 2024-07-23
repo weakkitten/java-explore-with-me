@@ -60,7 +60,7 @@ public class EventsService {
             if (text == null) {
                 if (categories == null) {
                     if (paid) {
-                        if (onlyAvailable) {//доступные, платные, без категории, времени и текста
+                        if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsPaidAndAvailable(times, pageable);
                             } else {
@@ -74,13 +74,13 @@ public class EventsService {
                             }
                         }
                     } else {
-                        if (onlyAvailable) {//беспатные, доступные, без категории, времени и текста
+                        if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsAvailable(times, pageable);
                             } else {
                                 eventsList = repository.getEventsAvailableByDate(times, pageable);
                             }
-                        } else {//бесплатные, все, без категории, времени и текста
+                        } else {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsAll(times, pageable);
                             } else {
@@ -90,7 +90,7 @@ public class EventsService {
                     }
                 } else {
                     if (paid) {
-                        if (onlyAvailable) {//доступные, платные, с категориями, без времени и текста
+                        if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsWitchCatAndPaidAndAvailable(categories,
                                         times,
@@ -100,7 +100,7 @@ public class EventsService {
                                         times,
                                         pageable);
                             }
-                        } else {//платные, с категориями, без времени и текста, все
+                        } else {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsPaidAndCat(categories, times, pageable);
                             } else {
@@ -108,13 +108,13 @@ public class EventsService {
                             }
                         }
                     } else {
-                        if (onlyAvailable) {//бесплатные, доступные, с категорией, без времени и текста
+                        if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsAvailableAndCat(categories, times, pageable);
                             } else {
                                 eventsList = repository.getEventsAvailableAndCatByDate(categories, times, pageable);
                             }
-                        } else {//бесплатные, все, с категорией, без времени и текста
+                        } else {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsAllAndCat(categories, times, pageable);
                             } else {
@@ -123,7 +123,7 @@ public class EventsService {
                         }
                     }
                 }
-            } else {//есть текст, нет времени
+            } else {
                 if (categories == null) {
                     if (paid) {
                         if (onlyAvailable) {
@@ -154,7 +154,7 @@ public class EventsService {
                             }
                         }
                     }
-                } else {//с текстом, категорией, без времени
+                } else {
                     if (paid) {
                         if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
@@ -205,19 +205,19 @@ public class EventsService {
                     }
                 }
             }
-        } else {//время есть
+        } else {
             LocalDateTime start = LocalDateTime.parse(rangeStart, formatter);
             LocalDateTime end = LocalDateTime.parse(rangeEnd, formatter);
             if (text == null) {
                 if (categories == null) {
                     if (paid) {
-                        if (onlyAvailable) {//доступные, платные, без категории, времени и текста
+                        if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsPaidAndAvailable(start, end, pageable);
                             } else {
                                 eventsList = repository.getEventsPaidAndAvailableByDate(start, end, pageable);
                             }
-                        } else {//платные, все, без категории, времени и текста
+                        } else {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsPaid(start, end, pageable);
                             } else {
@@ -225,13 +225,13 @@ public class EventsService {
                             }
                         }
                     } else {
-                        if (onlyAvailable) {//беспатные, доступные, без категории, времени и текста
+                        if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsAvailable(start, end, pageable);
                             } else {
                                 eventsList = repository.getEventsAvailableByDate(start, end, pageable);
                             }
-                        } else {//бесплатные, все, без категории, времени и текста
+                        } else {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsAll(start, end, pageable);
                             } else {
@@ -241,7 +241,7 @@ public class EventsService {
                     }
                 } else {
                     if (paid) {
-                        if (onlyAvailable) {//доступные, платные, с категориями, без времени и текста
+                        if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsWitchCatAndPaidAndAvailable(categories, start,
                                         end, pageable);
@@ -251,7 +251,7 @@ public class EventsService {
                                         end,
                                         pageable);
                             }
-                        } else {//платные, с категориями, без времени и текста, все
+                        } else {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsPaidAndCat(categories, start, end, pageable);
                             } else {
@@ -259,13 +259,13 @@ public class EventsService {
                             }
                         }
                     } else {
-                        if (onlyAvailable) {//бесплатные, доступные, с категорией, без времени и текста
+                        if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsAvailableAndCat(categories, start, end, pageable);
                             } else {
                                 eventsList = repository.getEventsAvailableAndCatByDate(categories,start, end, pageable);
                             }
-                        } else {//бесплатные, все, с категорей, без времени и текста
+                        } else {
                             if (sort.equals("VIEWS")) {
                                 eventsList = repository.getEventsAllAndCat(categories, start, end, pageable);
                             } else {
@@ -274,7 +274,7 @@ public class EventsService {
                         }
                     }
                 }
-            } else {//есть текст, нет времени
+            } else {
                 if (categories == null) {
                     if (paid) {
                         if (onlyAvailable) {
@@ -310,7 +310,7 @@ public class EventsService {
                             }
                         }
                     }
-                } else {//с текстом, категорией, без времени
+                } else {
                     if (paid) {
                         if (onlyAvailable) {
                             if (sort.equals("VIEWS")) {
@@ -335,11 +335,6 @@ public class EventsService {
                                         end,
                                         pageable);
                             } else {
-                                System.out.println("Я попадаю сюда?");
-                                System.out.println("Текст - " + text.toLowerCase());
-                                System.out.println(categories);
-                                System.out.println(start);
-                                System.out.println(end);
                                 eventsList = repository.getEventsTextAndCategoriesAndPaidByDate(text.toLowerCase(),
                                         categories,
                                         start,

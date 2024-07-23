@@ -5,9 +5,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import ru.practicum.ewm_main.event.model.Location;
 import ru.practicum.ewm_main.utility.StateActionEvent;
-
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
 
 @Data
 @Builder

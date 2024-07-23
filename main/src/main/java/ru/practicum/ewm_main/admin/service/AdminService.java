@@ -98,13 +98,13 @@ public class AdminService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         List<Events> eventsList;
-        if (rangeEnd == null) {//без времени
+        if (rangeEnd == null) {
             if (users == null) {
                 if (states == null) {
-                    if (categories == null) {//без всего
+                    if (categories == null) {
                         eventsList = eventsRepository.getEventsWithoutTimes(LocalDateTime.now(),
                                                                             PageRequest.of(from / size, size));
-                    } else {//Без пользователей, states и времени, с категорией
+                    } else {
                         eventsList = eventsRepository.getEventsWithCategory(categories,
                                                                             LocalDateTime.now(),
                                                                             PageRequest.of(from / size, size));
@@ -114,24 +114,24 @@ public class AdminService {
                     for (String str : states) {
                         stateList.add(State.valueOf(str));
                     }
-                    if (categories == null) {//без пользователей, категории и времени, с states
+                    if (categories == null) {
                         eventsList = eventsRepository.getEventsWithState(stateList,
                                                                          LocalDateTime.now(),
                                                                          PageRequest.of(from / size, size));
-                    } else {//Без пользователей и времени, с states и категорией
+                    } else {
                         eventsList = eventsRepository.getEventsWithStateAndCategories(stateList,
                                 categories,
                                 LocalDateTime.now(),
                                 PageRequest.of(from / size, size));
                     }
                 }
-            } else {//с пользователями
+            } else {
                 if (states == null) {
                     if (categories == null) {//с пользователями
                         eventsList = eventsRepository.getEventsWithUsers(users,
                                 LocalDateTime.now(),
                                 PageRequest.of(from / size, size));
-                    } else {//с пользователемя, и state
+                    } else {
                         eventsList = eventsRepository.getEventsWithUsersAndCategories(users,
                                 categories,
                                 LocalDateTime.now(),
@@ -142,12 +142,12 @@ public class AdminService {
                     for (String str : states) {
                         stateList.add(State.valueOf(str));
                     }
-                    if (categories == null) {//С пользователями и state
+                    if (categories == null) {
                         eventsList = eventsRepository.getEventsWithUsersAndState(users,
                                 stateList,
                                 LocalDateTime.now(),
                                 PageRequest.of(from / size, size));
-                    } else {//Вся выгрузка
+                    } else {
                         eventsList = eventsRepository.getEventsWithUsersAndStatesAndCategoriesWithoutTimes(users,
                                 stateList,
                                 categories,
@@ -156,14 +156,14 @@ public class AdminService {
                     }
                 }
             }
-        } else {//со временем
-            if (users == null) {//без пользователей, с временем
-                if (states == null) {//без пользователей и states, с временем
-                    if (categories == null) {//без пользователей, states и категорий, с временем
+        } else {
+            if (users == null) {
+                if (states == null) {
+                    if (categories == null) {
                         eventsList = eventsRepository.getEventsWithTimes(LocalDateTime.parse(rangeStart, formatter),
                                 LocalDateTime.parse(rangeEnd, formatter),
                                 PageRequest.of(from / size, size));
-                    } else {//Без пользователей, states, с временем и категорией
+                    } else {
                         eventsList = eventsRepository.getEventsWithCategoryAndTimes(categories,
                                 LocalDateTime.parse(rangeStart, formatter),
                                 LocalDateTime.parse(rangeEnd, formatter),
@@ -174,13 +174,13 @@ public class AdminService {
                     for (String str : states) {
                         stateList.add(State.valueOf(str));
                     }
-                    if (categories == null) {//без пользователей и категорий, с временем и states
+                    if (categories == null) {
                         System.out.println("Мы сюда попадаем?");
                         eventsList = eventsRepository.getEventsWithStateAndTimes(stateList,
                                 LocalDateTime.parse(rangeStart, formatter),
                                 LocalDateTime.parse(rangeEnd, formatter),
                                 PageRequest.of(from / size, size));
-                    } else {//Без пользователей, с временем, категорией и states
+                    } else {
                         eventsList = eventsRepository.getEventsWithStateAndCategoriesAndTimes(stateList,
                                 categories,
                                 LocalDateTime.parse(rangeStart, formatter),
@@ -188,32 +188,32 @@ public class AdminService {
                                 PageRequest.of(from / size, size));
                     }
                 }
-            } else {//с пользователями
+            } else {
                 if (states == null) {
-                    if (categories == null) {//с пользователями и временем
+                    if (categories == null) {
                         eventsList = eventsRepository.getEventsWithUsersAndTimes(users,
                                 LocalDateTime.parse(rangeStart, formatter),
                                 LocalDateTime.parse(rangeEnd, formatter),
                                 PageRequest.of(from / size, size));
-                    } else {//с пользователемя, временем и state
+                    } else {
                         eventsList = eventsRepository.getEventsWithUsersAndTimesAndCategories(users,
                                 categories,
                                 LocalDateTime.parse(rangeStart, formatter),
                                 LocalDateTime.parse(rangeEnd, formatter),
                                 PageRequest.of(from / size, size));
                     }
-                } else {//с стейтами
+                } else {
                     List<State> stateList = new ArrayList<>();
                     for (String str : states) {
                         stateList.add(State.valueOf(str));
                     }
-                    if (categories == null) {//Выгрузка без категорий
+                    if (categories == null) {
                         eventsList = eventsRepository.getEventsWithUsersAndStatesAndTimes(users,
                                 stateList,
                                 LocalDateTime.parse(rangeStart, formatter),
                                 LocalDateTime.parse(rangeEnd, formatter),
                                 PageRequest.of(from / size, size));
-                    } else {//Вся выгрузка
+                    } else {
                         eventsList = eventsRepository.getEventsWithUsersAndStatesAndCategoriesAndTimes(users,
                                 stateList,
                                 categories,

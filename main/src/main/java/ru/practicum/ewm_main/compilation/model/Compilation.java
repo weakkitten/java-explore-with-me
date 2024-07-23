@@ -1,10 +1,7 @@
 package ru.practicum.ewm_main.compilation.model;
 
 import lombok.*;
-import ru.practicum.ewm_main.event.model.Events;
-
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter

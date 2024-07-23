@@ -5,8 +5,6 @@ import lombok.Data;
 import ru.practicum.ewm_main.categories.model.Categories;
 import ru.practicum.ewm_main.user.model.User;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 public class EventShortDto {

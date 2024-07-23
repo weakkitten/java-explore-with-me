@@ -2,10 +2,8 @@ package ru.practicum.ewm_main.event.model.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.ewm_main.categories.model.Categories;
 import ru.practicum.ewm_main.categories.model.dto.CategoryDto;
 import ru.practicum.ewm_main.event.model.Location;
-import ru.practicum.ewm_main.user.model.User;
 import ru.practicum.ewm_main.user.model.dto.UserShortDto;
 import ru.practicum.ewm_main.utility.State;
 

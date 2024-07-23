@@ -185,7 +185,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
     List<Events> getEventsText(String text,
                                LocalDateTime now,
                                Pageable pageable);
-    //orderByDate
+
     @Query("select e from Events e " +
             "where (lower(e.annotation) like ?1 " +
             "or lower(e.description) like ?1) " +

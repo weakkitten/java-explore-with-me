@@ -5,12 +5,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm_main.categories.model.dto.CategoriesMapper;
 import ru.practicum.ewm_main.compilation.model.Compilation;
 import ru.practicum.ewm_main.compilation.model.dto.CompilationDto;
 import ru.practicum.ewm_main.compilation.model.dto.CompilationMapper;
 import ru.practicum.ewm_main.compilation.repository.CompilationRepository;
-import ru.practicum.ewm_main.event.model.CompilationsEvents;
 import ru.practicum.ewm_main.event.model.Events;
 import ru.practicum.ewm_main.event.model.dto.EventShortDto;
 import ru.practicum.ewm_main.event.model.dto.EventsMapper;
@@ -36,7 +34,7 @@ public class CompilationService {
             compilationsEventsList = repository.findByPinned(pinned, PageRequest.of(from / size, size));
         }
         List<CompilationDto> compilationDtos = new ArrayList<>();
-        for (Compilation compilation : compilationsEventsList) {//Я честно пытался без этой грязи, но не понимаю как..
+        for (Compilation compilation : compilationsEventsList) {
             List<Integer> eventsIdsList = compilationsEventsRepository.getEventIds(compilation.getId());
             List<Events> eventsList = eventsRepository.findAll(eventsIdsList);
             List<EventShortDto> eventShortDtoList = new ArrayList<>();

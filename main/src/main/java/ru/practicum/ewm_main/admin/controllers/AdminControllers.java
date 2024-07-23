@@ -10,8 +10,6 @@ import ru.practicum.ewm_main.compilation.model.dto.NewCompilationDto;
 import ru.practicum.ewm_main.compilation.model.dto.UpdateCompilationRequest;
 import ru.practicum.ewm_main.event.model.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm_main.user.model.dto.NewUserDto;
-import ru.practicum.ewm_main.user.model.dto.UserDto;
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -54,7 +52,7 @@ public class AdminControllers {
                                             @RequestParam(required = false) String rangeStart,
                                             @RequestParam(required = false) String rangeEnd,
                                             @RequestParam(defaultValue = "0") int from,
-                                            @RequestParam(defaultValue = "10") int size){
+                                            @RequestParam(defaultValue = "10") int size) {
         log.info("===============");
         log.info("Начало операции по выборке ивентов из админки");
         log.info("===============");
