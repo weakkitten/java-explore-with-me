@@ -112,7 +112,11 @@ public class UserService {
     public ResponseEntity<Object> updateUserEventRequest(int userId,
                                                          int eventId,
                                                          EventRequestStatusUpdateRequest requestStatusUpdateRequest) {
-        System.out.println("Мы попадаем сюда?");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         if (eventsRepository.findById(eventId).isEmpty()) {
             throw new NotFoundException("Не найдено события с таким id");
         }
