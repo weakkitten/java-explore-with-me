@@ -14,21 +14,21 @@ import ru.practicum.ewm_main.error.exception.NotFoundException;
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequestException(final BadRequestException e) {//400
+    public ErrorResponse handleBadRequestException(final BadRequestException e) {
         log.debug("Конфликт данных с БД");
         return new ErrorResponse("Bad request", HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(final NotFoundException e) {//404
+    public ErrorResponse handleNotFoundException(final NotFoundException e) {
         log.debug("Конфликт данных с БД");
         return new ErrorResponse("Такие данные уже есть в БД", HttpStatus.NOT_FOUND,  e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleConflictException(final ConflictException e) {//409
+    public ErrorResponse handleConflictException(final ConflictException e) {
         log.debug("Конфликт данных с БД");
         return new ErrorResponse("Такие данные уже есть в БД", HttpStatus.CONFLICT,  e.getMessage());
     }

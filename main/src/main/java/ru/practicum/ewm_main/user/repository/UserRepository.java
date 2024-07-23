@@ -11,6 +11,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("select u from User u " +
            "where u.id in ?1")
     List<User> findById(List<Integer> userId, Pageable pageable);
+
     User findByNameAndEmail(String name, String email);
+
     Optional<User> findByEmail(String email);
 }

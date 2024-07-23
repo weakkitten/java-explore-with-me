@@ -5,8 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.ewm_main.event.model.Events;
 import ru.practicum.ewm_main.utility.State;
-
-import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +13,11 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
     List<Events> findByInitiatorId(int userId, Pageable pageable);
 
     Events findByInitiatorIdAndAnnotation(int userId, String annotation);
+
     @Query("select e.categoryId from Events e " +
         "where e.categoryId = ?1")
     Optional<List<Integer>> findByCategoryId(int categoryId);
-    //EventController getEvents без всего, по просмотрам
+
     @Query("select e from Events e " +
             "where e.paid = true " +
             "and e.confirmedRequests < e.participantLimit " +
@@ -46,7 +45,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
             "order by e.views desc")
     List<Events> getEventsAll(LocalDateTime now,
                               Pageable pageable);
-    //без всего, по эндДейт
+
     @Query("select e from Events e " +
             "where e.paid = true " +
             "and e.confirmedRequests < e.participantLimit " +
@@ -74,7 +73,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
             "order by e.eventDate desc")
     List<Events> getEventsAllByDate(LocalDateTime now,
                                     Pageable pageable);
-    //withCategories
+
     @Query("select e from Events e " +
             "where e.paid = true " +
             "and e.categoryId in ?1 " +
@@ -110,7 +109,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
     List<Events> getEventsAllAndCat(List<Integer> categories,
                                     LocalDateTime now,
                                     Pageable pageable);
-    //withCategoriesOrderByDate
+
     @Query("select e from Events e " +
             "where e.paid = true " +
             "and e.categoryId in ?1 " +
@@ -146,7 +145,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
     List<Events> getEventsAllAndCatByDate(List<Integer> categories,
                                           LocalDateTime now,
                                           Pageable pageable);
-    //есть текст, нет времени
+
     @Query("select e from Events e " +
             "where (lower(e.annotation) like ?1 " +
             "or lower(e.description) like ?1) " +
@@ -226,8 +225,6 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
     List<Events> getEventsTextByDate(String text,
                                      LocalDateTime now,
                                      Pageable pageable);
-    //с текстом и категорией, без времени
-
 
     @Query("select e from Events e " +
             "where (lower(e.annotation) like ?1 " +
@@ -276,7 +273,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                             List<Integer> categories,
                                             LocalDateTime times,
                                             Pageable pageable);
-    //orderByDate
+
     @Query("select e from Events e " +
             "where (lower(e.annotation) like ?1 " +
             "or lower(e.description) like ?1) " +
@@ -356,7 +353,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
     List<Events> getEventsAll(LocalDateTime start,
                               LocalDateTime end,
                               Pageable pageable);
-    //без всего, по эндДейт
+
     @Query("select e from Events e " +
             "where e.paid = true " +
             "and e.confirmedRequests < e.participantLimit " +
@@ -388,7 +385,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
     List<Events> getEventsAllByDate(LocalDateTime start,
                                     LocalDateTime end,
                                     Pageable pageable);
-    //withCategories
+
     @Query("select e from Events e " +
             "where e.paid = true " +
             "and e.categoryId in ?1 " +
@@ -428,7 +425,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                     LocalDateTime start,
                                     LocalDateTime end,
                                     Pageable pageable);
-    //withCategoriesOrderByDate
+
     @Query("select e from Events e " +
             "where e.paid = true " +
             "and e.categoryId in ?1 " +
@@ -468,7 +465,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                           LocalDateTime start,
                                           LocalDateTime end,
                                           Pageable pageable);
-    //есть текст, нет времени
+
     @Query("select e from Events e " +
            "where (lower(e.annotation) like ?1 " +
            "or lower(e.description) like ?1) " +
@@ -512,7 +509,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                LocalDateTime start,
                                LocalDateTime end,
                                Pageable pageable);
-    //orderByDate
+
     @Query("select e from Events e " +
            "where (lower(e.annotation) like ?1 " +
            "or lower(e.description) like ?1) " +
@@ -556,7 +553,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                      LocalDateTime start,
                                      LocalDateTime end,
                                      Pageable pageable);
-    //с текстом и категорией, без времени
+
     @Query("select e from Events e " +
            "where (lower(e.annotation) like ?1 " +
            "or lower(e.description) like ?1) " +
@@ -608,7 +605,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                             LocalDateTime start,
                                             LocalDateTime end,
                                             Pageable pageable);
-    //orderByDate
+
     @Query("select e from Events e " +
            "where (lower(e.annotation) like ?1 " +
            "or lower(e.description) like ?1) " +
@@ -660,7 +657,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                                   LocalDateTime start,
                                                   LocalDateTime end,
                                                   Pageable pageable);
-    //Для админ/гетИвентс
+
     @Query("select e from Events e " +
             "where e.initiatorId in ?1 " +
             "and e.state in ?2 " +
@@ -732,7 +729,7 @@ public interface EventsRepository extends JpaRepository<Events, Integer> {
                                                      LocalDateTime rangeStart,
                                                      LocalDateTime rangeEnd,
                                                      Pageable pageable);
-    //Без времени
+
     @Query("select e from Events e " +
             "where e.eventDate > ?1")
     List<Events> getEventsWithoutTimes(LocalDateTime rangeEnd,

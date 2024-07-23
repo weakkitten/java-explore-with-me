@@ -1,7 +1,6 @@
 package ru.practicum.ewm_main.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.http.protocol.RequestDate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

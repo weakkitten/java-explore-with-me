@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main.event.service.EventsService;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Future;
 import java.util.List;
 
 @RestController

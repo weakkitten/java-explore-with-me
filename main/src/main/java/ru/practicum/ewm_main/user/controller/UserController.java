@@ -8,11 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main.event.model.dto.NewEventDto;
 import ru.practicum.ewm_main.event.model.dto.UpdateEventUserRequest;
 import ru.practicum.ewm_main.request.model.EventRequestStatusUpdateRequest;
-import ru.practicum.ewm_main.request.model.Request;
 import ru.practicum.ewm_main.user.service.UserService;
-
 import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @RequestMapping(path = "/users")

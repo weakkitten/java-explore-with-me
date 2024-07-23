@@ -18,7 +18,6 @@ import ru.practicum.ewm_main.event.model.dto.EventFullDto;
 import ru.practicum.ewm_main.event.model.dto.EventsMapper;
 import ru.practicum.ewm_main.event.repository.EventsRepository;
 import ru.practicum.ewm_main.event.repository.ViewsRepository;
-import ru.practicum.ewm_main.user.model.dto.UserDto;
 import ru.practicum.ewm_main.user.model.dto.UserMapper;
 import ru.practicum.ewm_main.user.model.dto.UserShortDto;
 import ru.practicum.ewm_main.utility.State;
