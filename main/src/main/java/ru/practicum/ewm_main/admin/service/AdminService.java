@@ -240,7 +240,7 @@ public class AdminService {
     @Transactional
     public ResponseEntity<Object> updateEvents(int eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         try {
-            Thread.sleep(100000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
