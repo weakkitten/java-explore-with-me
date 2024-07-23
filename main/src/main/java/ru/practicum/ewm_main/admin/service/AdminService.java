@@ -74,7 +74,8 @@ public class AdminService {
         categoriesRepository.deleteById(catId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
-
+    
+    @Transactional
     public ResponseEntity<Object> updateCategories(int catId, NewCategoryDto dto) {
         if (categoriesRepository.findByName(dto.getName()) != null) {
             if (!categoriesRepository.findById(catId).get().getName().equals(dto.getName())) {
@@ -235,9 +236,9 @@ public class AdminService {
         }
         return ResponseEntity.ok(eventFullDtoList);
     }
-
+    
+    @Transactional
     public ResponseEntity<Object> updateEvents(int eventId, UpdateEventAdminRequest updateEventAdminRequest) {
-        System.out.println(updateEventAdminRequest);
         if (eventsRepository.findById(eventId).isEmpty()) {
             throw new NotFoundException("Такой ивент не обнаружен");
         }
@@ -278,6 +279,7 @@ public class AdminService {
         return ResponseEntity.ok(userRepository.findById(ids, PageRequest.of(from > 0 ? from / size : 0, size)));
     }
 
+    @Transactional
     public ResponseEntity<Object> addNewUser(NewUserDto dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new ConflictException("Такая почта уже используется");
@@ -288,12 +290,14 @@ public class AdminService {
                 user.getEmail()));
         return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
     }
-
+    
+    @Transactional
     public ResponseEntity<Object> deleteUser(int userId) {
         userRepository.deleteById(userId);
         return ResponseEntity.noContent().build();
     }
 
+    @Transactional
     public ResponseEntity<Object> addNewCompilation(NewCompilationDto dto) {
         List<Integer> eventList = dto.getEvents();
         Compilation compilation = CompilationMapper.toCompilation(dto);
@@ -329,6 +333,7 @@ public class AdminService {
         return ResponseEntity.status(HttpStatus.CREATED).body(compilationDto);
     }
 
+    @Transactional
     public ResponseEntity<Object> deleteCompilations(int compId) {
         List<CompilationsEvents> compilationsEventsList = compilationsEventsRepository.findByCompilationId(compId);
         compilationsEventsRepository.deleteAll(compilationsEventsList);
@@ -336,6 +341,7 @@ public class AdminService {
         return ResponseEntity.noContent().build();
     }
 
+    @Transactional
     public ResponseEntity<Object> updateCompilation(int compId, UpdateCompilationRequest updateCompilationRequest) {
         List<Integer> eventList = updateCompilationRequest.getEvents();
         List<CompilationsEvents> compilationsEventsList = compilationsEventsRepository.findByCompilationId(compId);
