@@ -74,7 +74,7 @@ public class AdminService {
         categoriesRepository.deleteById(catId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
-    
+
     @Transactional
     public ResponseEntity<Object> updateCategories(int catId, NewCategoryDto dto) {
         if (categoriesRepository.findByName(dto.getName()) != null) {
@@ -236,7 +236,7 @@ public class AdminService {
         }
         return ResponseEntity.ok(eventFullDtoList);
     }
-    
+
     @Transactional
     public ResponseEntity<Object> updateEvents(int eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         if (eventsRepository.findById(eventId).isEmpty()) {
@@ -290,7 +290,7 @@ public class AdminService {
                 user.getEmail()));
         return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
     }
-    
+
     @Transactional
     public ResponseEntity<Object> deleteUser(int userId) {
         userRepository.deleteById(userId);
