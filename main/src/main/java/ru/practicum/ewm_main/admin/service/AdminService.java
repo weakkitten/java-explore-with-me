@@ -239,11 +239,6 @@ public class AdminService {
 
     @Transactional
     public ResponseEntity<Object> updateEvents(int eventId, UpdateEventAdminRequest updateEventAdminRequest) {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         if (eventsRepository.findById(eventId).isEmpty()) {
             throw new NotFoundException("Такой ивент не обнаружен");
         }
