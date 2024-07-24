@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm_main.categories.model.dto.CategoriesMapper;
 import ru.practicum.ewm_main.categories.model.dto.CategoryDto;
-import ru.practicum.ewm_main.categories.model.dto.NewCategoryDto;
 import ru.practicum.ewm_main.categories.repository.CategoriesRepository;
 import ru.practicum.ewm_main.comments.model.Comments;
 import ru.practicum.ewm_main.comments.model.dto.CommentDtoRequest;
