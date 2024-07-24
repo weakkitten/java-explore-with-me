@@ -3,6 +3,7 @@ package ru.practicum.ewm_main.admin.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm_main.admin.service.AdminService;
 import ru.practicum.ewm_main.categories.model.dto.NewCategoryDto;
@@ -13,7 +14,7 @@ import ru.practicum.ewm_main.user.model.dto.NewUserDto;
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping(path = "/admin")
 @Slf4j
 @RequiredArgsConstructor

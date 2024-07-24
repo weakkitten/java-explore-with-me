@@ -8,7 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm_main.categories.model.dto.CategoriesMapper;
 import ru.practicum.ewm_main.categories.model.dto.CategoryDto;
+import ru.practicum.ewm_main.categories.model.dto.NewCategoryDto;
 import ru.practicum.ewm_main.categories.repository.CategoriesRepository;
+import ru.practicum.ewm_main.comments.model.Comments;
+import ru.practicum.ewm_main.comments.model.dto.CommentDtoRequest;
+import ru.practicum.ewm_main.comments.model.dto.CommentMapper;
+import ru.practicum.ewm_main.comments.model.dto.NewCommentDto;
+import ru.practicum.ewm_main.comments.model.dto.UpdateCommentDto;
+import ru.practicum.ewm_main.comments.repository.CommentRepository;
 import ru.practicum.ewm_main.error.exception.BadRequestException;
 import ru.practicum.ewm_main.error.exception.ConflictException;
 import ru.practicum.ewm_main.error.exception.NotFoundException;
@@ -35,6 +42,7 @@ public class UserService {
     private final EventsRepository eventsRepository;
     private final RequestRepository requestRepository;
     public final CategoriesRepository categoriesRepository;
+    public final CommentRepository commentRepository;
 
     public ResponseEntity<Object> getUsersEvents(int userId, int from, int size) {
         List<Events> userEventsList =  eventsRepository.findByInitiatorId(userId,
@@ -76,7 +84,7 @@ public class UserService {
     }
 
     @Transactional
-    public Object updateUserEvent(int userId, int eventId, UpdateEventUserRequest dto) {
+    public ResponseEntity<Object> updateUserEvent(int userId, int eventId, UpdateEventUserRequest dto) {
         if (eventsRepository.findById(eventId).isEmpty()) {
             throw new BadRequestException("Не найден");
         }
@@ -250,5 +258,50 @@ public class UserService {
         requestRepository.save(request);
         ParticipationRequestDto requestDto = RequestMapper.toRequestDto(request);
         return ResponseEntity.ok(requestDto);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> addNewComments(int userId, NewCommentDto dto) {
+        Comments comments = CommentMapper.toComment(dto, userId);
+        commentRepository.save(comments);
+        Comments temp = commentRepository.findByUserIdAndEventIdAndText(userId, dto.getEventId(), dto.getText());
+        CommentDtoRequest dtoRequest = CommentMapper.toCommentRequest(temp);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtoRequest);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> updateComments(int userId, int commentId, UpdateCommentDto commentDto) {
+        if (commentRepository.findById(commentId).isEmpty()) {
+            throw new BadRequestException("Ошибка поиска комментария");
+        }
+        Comments comments = commentRepository.findById(commentId).get();
+        if (commentDto.getText().equals(comments.getText())) {
+            throw new ConflictException("Одинаковый текст");
+        }
+        if (commentDto.getEventId() != null) {
+            if (comments.getEventId() != commentDto.getEventId()) {
+                throw new ConflictException("Некорректный eventId");
+            }
+        }
+        if (comments.getUserId() != userId) {
+            throw new ConflictException("Этот пользователь не может изменить комментарий");
+        }
+        comments.setText(commentDto.getText());
+        commentRepository.save(comments);
+        CommentDtoRequest dtoRequest = CommentMapper.toCommentRequest(comments);
+        return ResponseEntity.ok(dtoRequest);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> deleteComments(int userId, int commentId) {
+        if (commentRepository.findById(commentId).isEmpty()) {
+            throw new BadRequestException("Комментария с таким id не найден");
+        }
+        Comments comments = commentRepository.findById(commentId).get();
+        if (comments.getUserId() != userId) {
+            throw new ConflictException("Этот пользователь не может удалить комментарий");
+        }
+        categoriesRepository.deleteById(commentId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }

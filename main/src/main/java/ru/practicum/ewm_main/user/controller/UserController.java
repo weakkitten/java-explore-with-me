@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm_main.comments.model.dto.NewCommentDto;
+import ru.practicum.ewm_main.comments.model.dto.UpdateCommentDto;
 import ru.practicum.ewm_main.event.model.dto.NewEventDto;
 import ru.practicum.ewm_main.event.model.dto.UpdateEventUserRequest;
 import ru.practicum.ewm_main.request.model.EventRequestStatusUpdateRequest;
@@ -37,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/events/{eventId}")
-    public Object getUserEventInfo(@PathVariable int userId, @PathVariable int eventId) {
+    public ResponseEntity<Object> getUserEventInfo(@PathVariable int userId, @PathVariable int eventId) {
         log.info("===============");
         log.info("Начало выгрузки информации об ивенте - " + eventId);
         log.info("===============");
@@ -45,7 +47,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}/events/{eventId}")
-    public Object updateUserEvent(@PathVariable int userId,
+    public ResponseEntity<Object> updateUserEvent(@PathVariable int userId,
                                   @PathVariable int eventId,
                                   @RequestBody @Valid UpdateEventUserRequest request) {
         log.info("===============");
@@ -97,5 +99,33 @@ public class UserController {
         log.info("Отмена запроса - " + userId);
         log.info("===============");
         return service.cancelRequests(userId, requestId);
+    }
+
+    @PostMapping("/{userId}/events/comment")
+    public ResponseEntity<Object> addNewComment(@PathVariable int userId,
+                                                @RequestBody @Valid NewCommentDto commentDto) {
+        log.info("===============");
+        log.info("Добавление комментария к ивенту - ");
+        log.info("===============");
+        return service.addNewComments(userId, commentDto);
+    }
+
+    @PatchMapping("/{userId}/events/comment/{commentId}")
+    public ResponseEntity<Object> updateComment(@PathVariable int userId,
+                                                @PathVariable int commentId,
+                                                @RequestBody @Valid UpdateCommentDto commentDto) {
+        log.info("===============");
+        log.info("Обновления комментария с id - " + commentId);
+        log.info("===============");
+        return service.updateComments(userId, commentId, commentDto);
+    }
+
+    @DeleteMapping("/{userId}/events/comment/{commentId}")
+    public ResponseEntity<Object> deleteComment(@PathVariable int userId,
+                                                @PathVariable int commentId) {
+        log.info("===============");
+        log.info("Обновления комментария с id - " + commentId);
+        log.info("===============");
+        return service.deleteComments(userId, commentId);
     }
 }
