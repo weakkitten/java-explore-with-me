@@ -2,7 +2,6 @@ package ru.practicum.exploreWithMe.Dto.model.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
