@@ -1,6 +1,8 @@
 package ru.practicum.ewm.Service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.Dto.model.Hit;
 import ru.practicum.ewm.Dto.model.dto.HitMapper;
@@ -18,9 +20,10 @@ public class StatService {
     private final StatRepository repository;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public void saveHit(NewHit newHit) {
+    public Object saveHit(NewHit newHit) {
         Hit hit = HitMapper.toHit(newHit);
         repository.save(hit);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     public Object getStat(String start,

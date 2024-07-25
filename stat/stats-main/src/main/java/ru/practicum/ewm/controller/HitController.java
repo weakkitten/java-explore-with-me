@@ -15,11 +15,11 @@ public class HitController {
     private final StatService service;
 
     @PostMapping("/hit")
-    public void saveHit(@RequestBody NewHit hit) {
+    public Object saveHit(@RequestBody NewHit hit) {
         log.info("==========================");
         log.info("Объект отправлен: " + hit);
         log.info("==========================");
-        service.saveHit(hit);
+        return service.saveHit(hit);
     }
 
     @GetMapping("/stats")
