@@ -285,6 +285,7 @@ public class AdminService {
             throw new ConflictException("Такая почта уже используется");
         }
         User user = UserMapper.toUser(dto);
+        System.out.println(user);
         userRepository.save(user);
         UserDto userDto = UserMapper.toUserDto(userRepository.findByNameAndEmail(user.getName(),
                 user.getEmail()));

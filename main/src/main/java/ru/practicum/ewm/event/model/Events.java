@@ -55,6 +55,6 @@ public class Events {
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Categories category;
     @ManyToOne
-    @JoinColumn(name = "category_id", insertable = false, updatable = false)
+    @JoinColumn(name = "initiator_id", insertable = false, updatable = false)
     private User initiator;
 }
