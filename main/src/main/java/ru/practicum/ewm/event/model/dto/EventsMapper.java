@@ -2,6 +2,7 @@ package ru.practicum.ewm.event.model.dto;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.ewm.categories.model.dto.CategoryDto;
+import ru.practicum.ewm.comments.model.dto.CommentDtoRequest;
 import ru.practicum.ewm.event.model.Events;
 import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.user.model.dto.UserShortDto;
@@ -11,6 +12,7 @@ import ru.practicum.ewm.utility.StateActionEvent;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @UtilityClass
 public class EventsMapper {
@@ -77,6 +79,34 @@ public class EventsMapper {
                 .state(events.getState())
                 .title(events.getTitle())
                 .views(events.getViews())
+                .build();
+    }
+
+    public static EventFullDtoWithComment toEventFullDtoWithComments(Events events,
+                                                         CategoryDto categoryDto,
+                                                         UserShortDto userShortDto,
+                                                         List<CommentDtoRequest> commentDtoRequest) {
+        return EventFullDtoWithComment.builder()
+                .id(events.getId())
+                .annotation(events.getAnnotation())
+                .category(categoryDto)
+                .createdOn(events.getCreatedOn())
+                .description(events.getDescription())
+                .confirmedRequests(events.getConfirmedRequests())
+                .eventDate(formatter.format(events.getEventDate()))
+                .initiator(userShortDto)
+                .location(Location.builder()
+                        .lat(events.getLat())
+                        .lon(events.getLon())
+                        .build())
+                .paid(events.getPaid())
+                .participantLimit(events.getParticipantLimit())
+                .publishedOn(events.getPublishedOn())
+                .requestModeration(events.getRequestModeration())
+                .state(events.getState())
+                .title(events.getTitle())
+                .views(events.getViews())
+                .commentDtoRequest(commentDtoRequest)
                 .build();
     }
 

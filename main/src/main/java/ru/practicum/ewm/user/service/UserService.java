@@ -296,7 +296,8 @@ public class UserService {
             throw new BadRequestException("Комментария с таким id не найден");
         }
         Comments comments = commentRepository.findById(commentId).get();
-        if (comments.getUserId() != userId) {
+        Events events = eventsRepository.findById(comments.getEventId()).get();
+        if (comments.getUserId() != userId || events.getInitiatorId() != userId) {
             throw new ConflictException("Этот пользователь не может удалить комментарий");
         }
         categoriesRepository.deleteById(commentId);

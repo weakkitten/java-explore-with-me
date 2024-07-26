@@ -8,11 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.categories.model.dto.CategoriesMapper;
 import ru.practicum.ewm.categories.model.dto.CategoryDto;
+import ru.practicum.ewm.comments.model.Comments;
+import ru.practicum.ewm.comments.model.dto.CommentDtoRequest;
+import ru.practicum.ewm.comments.model.dto.CommentMapper;
+import ru.practicum.ewm.comments.repository.CommentRepository;
 import ru.practicum.ewm.error.exception.BadRequestException;
 import ru.practicum.ewm.error.exception.NotFoundException;
 import ru.practicum.ewm.event.model.Events;
 import ru.practicum.ewm.event.model.Views;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
+import ru.practicum.ewm.event.model.dto.EventFullDtoWithComment;
 import ru.practicum.ewm.event.model.dto.EventsMapper;
 import ru.practicum.ewm.event.repository.EventsRepository;
 import ru.practicum.ewm.event.repository.ViewsRepository;
@@ -32,6 +37,7 @@ import java.util.List;
 public class EventsService {
     private final EventsRepository repository;
     private final ViewsRepository viewsRepository;
+    private final CommentRepository commentRepository;
     private final StatClientService clientService;
 
     public ResponseEntity<Object> getEvents(String text,
@@ -388,7 +394,7 @@ public class EventsService {
         return ResponseEntity.ok(eventFullDtoList);
     }
 
-    public ResponseEntity<Object> getEventsById(int id, String ip, String requestUri) {
+    public ResponseEntity<Object> getEventsById(int id, String ip, String requestUri, boolean withComment) {
         if (repository.findById(id).get().getState() != State.PUBLISHED) {
             throw new NotFoundException("Не найдено");
         }
@@ -413,6 +419,17 @@ public class EventsService {
         Events events = repository.findById(id).get();
         CategoryDto categoryDto = CategoriesMapper.toCategoryDto(events.getCategory());
         UserShortDto userShortDto = UserMapper.userShortDto(events.getInitiator());
+        if (withComment) {
+            List<Comments> commentsList = commentRepository.findByEventId(id);
+            List<CommentDtoRequest> commentDtoRequests = new ArrayList<>();
+            for (Comments comments : commentsList) {
+                CommentDtoRequest dto = CommentMapper.toCommentRequest(comments);
+                commentDtoRequests.add(dto);
+            }
+            EventFullDtoWithComment fullDtoWithComment = EventsMapper.toEventFullDtoWithComments(events,
+                    categoryDto, userShortDto, commentDtoRequests);
+            return ResponseEntity.status(HttpStatus.OK).body(fullDtoWithComment);
+        }
         EventFullDto fullDto = EventsMapper.toEventFullDto(events, categoryDto, userShortDto);
         return ResponseEntity.status(HttpStatus.OK).body(fullDto);
     }
