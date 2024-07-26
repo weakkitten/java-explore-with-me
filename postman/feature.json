@@ -172,11 +172,11 @@
 					"variable": [
 						{
 							"key": "userId",
-							"value": ""
+							"value": "1"
 						},
 						{
 							"key": "commentId",
-							"value": ""
+							"value": "1"
 						}
 					]
 				},
