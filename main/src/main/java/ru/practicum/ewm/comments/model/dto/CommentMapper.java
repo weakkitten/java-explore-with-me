@@ -20,6 +20,7 @@ public class CommentMapper {
 
     public static CommentDtoRequest toCommentRequest(Comments comments) {
             return CommentDtoRequest.builder()
+                    .id(comments.getId())
                     .text(comments.getText())
                     .times(formatter.format(comments.getTimes()))
                     .userId(comments.getUserId())

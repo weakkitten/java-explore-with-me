@@ -299,7 +299,7 @@ public class UserService {
         if (comments.getUserId() != userId) {
             throw new ConflictException("Этот пользователь не может удалить комментарий");
         }
-        categoriesRepository.deleteById(commentId);
+        commentRepository.deleteById(commentId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }

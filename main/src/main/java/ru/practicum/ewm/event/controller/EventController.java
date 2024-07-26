@@ -34,10 +34,12 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getEventsById(@PathVariable int id, HttpServletRequest request) {
+    public ResponseEntity<Object> getEventsById(@PathVariable int id,
+                                                @RequestParam(required = false) boolean withComment,
+                                                HttpServletRequest request) {
         log.info("===============");
         log.info("Выгрузка события из ИвентКонтроллера - " + id);
         log.info("===============");
-        return service.getEventsById(id, request.getRemoteAddr(), request.getRequestURI());
+        return service.getEventsById(id, request.getRemoteAddr(), request.getRequestURI(), withComment);
     }
 }
